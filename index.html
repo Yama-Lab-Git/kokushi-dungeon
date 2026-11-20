@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>国試ダンジョン</title>
+<!-- ホーム画面・タブのアイコン -->
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="apple-mobile-web-app-title" content="国試ダンジョン">
+<meta name="application-name" content="国試ダンジョン">
+<meta name="theme-color" content="#121733">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DotGothic16&family=BIZ+UDPGothic:wght@400;700&display=swap">
+<style>
+:root{--bg:#121733;--bg2:#1b2247;--panel:#232c5a;--line:#38437a;--fg:#eef0ff;--muted:#a6acd6;--accent:#ffb84d;--good:#5fe0b4;
+  --display:"DotGothic16","Hiragino Kaku Gothic ProN",monospace;--body:"BIZ UDPGothic","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.6;
+  background-image:radial-gradient(circle at 20% 0%,#2a2470 0,transparent 55%),radial-gradient(circle at 100% 100%,#2a1f55 0,transparent 50%);background-attachment:fixed}
+.wrap{max-width:460px;margin:0 auto;padding:max(24px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) 40px max(16px,env(safe-area-inset-left));display:flex;flex-direction:column;gap:18px}
+.hero{text-align:center;display:flex;flex-direction:column;align-items:center;gap:10px}
+.hero img{width:132px;height:132px;border-radius:30px;box-shadow:0 10px 30px rgba(0,0,0,.45)}
+h1{font-family:var(--display);font-weight:400;font-size:34px;margin:0;letter-spacing:.04em}
+.lead{color:var(--muted);margin:0;font-size:14px}
+.btn{display:block;text-align:center;text-decoration:none;font-family:var(--display);font-size:20px;padding:16px;border-radius:8px;background:var(--accent);color:#22180a;box-shadow:0 4px 0 #b97a1f}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 #b97a1f}
+.card{background:var(--bg2);border:1px solid var(--line);border-radius:8px;padding:14px 16px}
+.card h2{font-family:var(--display);font-weight:400;font-size:18px;margin:0 0 6px}
+.card ol{margin:0;padding-left:20px}
+.card li{margin:2px 0}
+.tabs{display:flex;gap:6px}
+.tabs button{flex:1;font:inherit;font-size:14px;padding:8px;border-radius:16px;border:1px solid var(--line);background:var(--panel);color:var(--fg);cursor:pointer}
+.tabs button[aria-pressed="true"]{background:var(--good);border-color:var(--good);color:#0f3f38;font-weight:700}
+.small{font-size:12px;color:var(--muted)}
+.splash{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:var(--bg)}
+.splash img{width:120px;height:120px;border-radius:28px;animation:pop .6s ease-out}
+.splash p{font-family:var(--display);margin:0;color:var(--muted)}
+@keyframes pop{from{transform:scale(.8);opacity:0}to{transform:none;opacity:1}}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div class="splash" id="splash" hidden><img src="icon-512.png" alt=""><p>ダンジョンへ移動しています…</p><a class="small" id="splashLink" href="#">移動しないときはここをタップ</a></div>
+
+<main class="wrap" id="main">
+  <div class="hero">
+    <img src="icon-512.png" alt="国試ダンジョンのアイコン">
+    <h1>国試ダンジョン</h1>
+    <p class="lead">理学療法の国家試験対策ゲーム。<br>ホーム画面に追加すると、アプリのようにすぐ開けます。</p>
+  </div>
+
+  <a class="btn" id="start" href="#">ダンジョンに入る</a>
+
+  <div class="card">
+    <h2>ホーム画面に追加する方法</h2>
+    <div class="tabs" role="group" aria-label="端末の種類">
+      <button type="button" id="tIos" aria-pressed="true">iPhone</button>
+      <button type="button" id="tAnd" aria-pressed="false">Android</button>
+    </div>
+    <ol id="ios" style="margin-top:10px">
+      <li><b>Safari</b>でこのページを開く（LINEなどの中で開いている場合は、右下や右上のメニューから「Safariで開く」）</li>
+      <li>画面下の<b>共有ボタン</b>（四角から上向きの矢印）をタップ</li>
+      <li><b>「ホーム画面に追加」</b>を選ぶ</li>
+      <li>名前が「国試ダンジョン」になっていることを確かめて<b>「追加」</b></li>
+    </ol>
+    <ol id="and" style="margin-top:10px" hidden>
+      <li><b>Chrome</b>でこのページを開く</li>
+      <li>右上の<b>︙（メニュー）</b>をタップ</li>
+      <li><b>「ホーム画面に追加」</b>（または「アプリをインストール」）を選ぶ</li>
+      <li><b>「追加」</b>をタップ</li>
+    </ol>
+  </div>
+  <p class="small">ホーム画面のアイコンから開くと、自動でゲームに移動します。この説明をもう一度見たいときは、ページのアドレスの最後に「?help」を付けて開いてください。</p>
+</main>
+
+<script>
+/* ▼ ここに Apps Script のウェブアプリURL（…/exec で終わるもの）を貼り付けてください ▼ */
+const GAME_URL = "https://script.google.com/macros/s/AKfycbzwcyITl5TaqW4sC7aIro6BSrzi7Qg41LDEKPm8FcxfwRTn8_T1vsAFkgWhbVMscAZpwA/exec";
+/* ▲ ここまで ▲ */
+
+const FLAG = "kokushi-launcher-used";
+const ok = /^https:\/\/script\.google\.com\//.test(GAME_URL);
+function go(){ try{ localStorage.setItem(FLAG,"1"); }catch(e){} if(ok) location.href = GAME_URL; else alertBox(); }
+function alertBox(){ const p=document.createElement("p"); p.className="card"; p.textContent="ゲームのURLがまだ設定されていません。先生に連絡してください。"; document.getElementById("main").prepend(p); }
+document.getElementById("start").onclick = e => { e.preventDefault(); go(); };
+document.getElementById("splashLink").onclick = e => { e.preventDefault(); go(); };
+const tI=document.getElementById("tIos"), tA=document.getElementById("tAnd");
+function tab(a){ tI.setAttribute("aria-pressed",a==="ios"); tA.setAttribute("aria-pressed",a==="and"); document.getElementById("ios").hidden=a!=="ios"; document.getElementById("and").hidden=a!=="and"; }
+tI.onclick=()=>tab("ios"); tA.onclick=()=>tab("and");
+if(/android/i.test(navigator.userAgent)) tab("and");
+
+/* 2回目以降（ホーム画面のアイコンから開いたときなど）は自動でゲームへ */
+let used=false; try{ used = localStorage.getItem(FLAG)==="1"; }catch(e){}
+const standalone = matchMedia("(display-mode: standalone)").matches || navigator.standalone;
+if(ok && !/[?&]help\b/.test(location.search) && (used || standalone)){
+  document.getElementById("main").hidden = true;
+  document.getElementById("splash").hidden = false;
+  setTimeout(()=>location.replace(GAME_URL), 350);
+}
+</script>
+</body>
+</html>
