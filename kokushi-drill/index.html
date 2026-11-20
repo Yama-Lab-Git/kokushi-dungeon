@@ -682,8 +682,9 @@ function mergeSt(c){const l=DATA.students.find(x=>x.id===c.id);if(!l){DATA.stude
 async function pullRoster(){try{const sn=await DB.collection('roster').get();let n=0;sn.docs.forEach(d=>{const x=(d.data()||{}).s;if(x&&x.id){mergeSt(x);n++}});if(n){applyRoster();saveStudents()}CL.st='接続OK（クラウドの名簿 '+n+'名）'}catch(e){CL.err=e.code||'error'}}
 async function pushRoster(){
  if(GAS_URL){let n=0,bad=0;const todo=DATA.students.filter(s=>CL.sig[hs(s.id)]!==JSON.stringify(s));
-  for(let i=0;i<todo.length;i+=8){const ch=todo.slice(i,i+8);
-   try{const r=await gas({a:'putStudents',pw:ADMINPW,students:ch});if(r.ok){n+=ch.length;ch.forEach(s=>CL.sig[hs(s.id)]=JSON.stringify(s))}else{bad+=ch.length;CL.err=r.error||'error'}}catch(e){bad+=ch.length;CL.err='network'}}
+  for(let i=0;i<todo.length;i+=3){const ch=todo.slice(i,i+3);let ok=false;
+   for(let t=0;t<3&&!ok;t++){try{const r=await gas({a:'putStudents',pw:ADMINPW,students:ch});if(r.ok){ok=true;n+=ch.length;ch.forEach(s=>CL.sig[hs(s.id)]=JSON.stringify(s))}else CL.err=r.error||'error'}catch(e){CL.err=(e&&e.name==='AbortError')?'時間切れ':'通信エラー'}if(!ok)await new Promise(r=>setTimeout(r,1500))}
+   if(!ok)bad+=ch.length}
   CL.last=Date.now();ui.msg=bad?`スプレッドシート保存：${n}名保存、${bad}名は失敗（${CL.err}）`:`スプレッドシートに ${n}名分を保存しました`;render();return}
  if(!DB){ui.msg='クラウドに接続できていません（この端末にだけ保存されています）';render();return}
  let n=0,ng=0;
@@ -726,7 +727,12 @@ async function cloudPullU(){
   await pullPeers();if(ui.screen==='home')render()}catch(e){}
 }
 async function pullPeers(){if(GAS_URL){if(!GASAUTH)return;try{const r=await gas({a:'peers',sid:GASAUTH.sid,name:GASAUTH.name});if(r.ok){PEER=r.peers;if(ui.screen==='home')render()}}catch(e){}return}try{const sn=await DB.collection('peer').get();PEER=sn.docs.filter(d=>d.id!==UID).map(d=>(d.data()||{}).mins||{})}catch(e){}}
-function cloudCard(){return `<div class="card"><h3>☁️ クラウド保存</h3><div class="sub">状態：${esc(CL.st)}${CL.last?'／最終保存 '+new Date(CL.last).toLocaleTimeString('ja-JP'):''}${CL.err?'／直近エラー '+esc(CL.err):''}</div><div class="sub">名簿と模試成績を保存すると、学生は自分のスマホから同じデータでログインできます（各自の分だけが読み込まれます）。学習記録は学生のスマホから自動で保存されます。</div><button class="btn" onclick="pushRoster()">名簿・成績を${GAS_URL?'スプレッドシートに':'クラウドに'}保存</button><button class="btn g" onclick="pullAllProgress()">学生の学習記録を取得</button></div>`}
+async function checkServer(){
+ if(!GAS_URL){return}
+ try{const r=await gas({a:'list',pw:ADMINPW});if(!r.ok)throw new Error(r.error||'error');ui.srv=r.list;ui.msg='サーバーの登録を確認しました（'+r.list.length+'名）'}catch(e){ui.msg='確認に失敗しました（'+(e.message||'通信エラー')+'）'}render()}
+function srvTable(){if(!ui.srv)return '';const L=ui.srv;const full=L.filter(x=>x.nres>0||(x.ext||[]).length).length;
+ return `<div class="sub" style="margin-top:8px">スプレッドシートに登録済み：${L.length}名（成績あり ${full}名）</div><table class="tbl"><tr><th>氏名</th><th>学籍番号</th><th>問題成績</th><th>問題なし模試</th></tr>${L.map(x=>`<tr><td>${esc(x.name)}</td><td>${esc(x.sid||'-')}</td><td>${x.nres}問</td><td>${esc((x.ext||[]).join('、')||'-')}</td></tr>`).join('')}</table>`}
+function cloudCard(){return `<div class="card"><h3>☁️ クラウド保存</h3><div class="sub">状態：${esc(CL.st)}${CL.last?'／最終保存 '+new Date(CL.last).toLocaleTimeString('ja-JP'):''}${CL.err?'／直近エラー '+esc(CL.err):''}</div><div class="sub">名簿と模試成績を保存すると、学生は自分のスマホから同じデータでログインできます（各自の分だけが読み込まれます）。学習記録は学生のスマホから自動で保存されます。</div><button class="btn" onclick="pushRoster()">名簿・成績を${GAS_URL?'スプレッドシートに':'クラウドに'}保存</button><button class="btn g" onclick="pullAllProgress()">学生の学習記録を取得</button>${GAS_URL?'<button class="btn g" onclick="checkServer()">登録状況を確認</button>'+srvTable():''}</div>`}
 
 loadBank();
 </script>
