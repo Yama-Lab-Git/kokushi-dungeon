@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>国試ドリル｜理学療法士国家試験</title>
+<style>
+:root{--bg:#f4f6fb;--card:#fff;--ink:#1d2433;--sub:#667085;--pri:#ff6b35;--pri2:#ffa41c;--ok:#12a36b;--okbg:#e6f7ef;--ng:#e5484d;--ngbg:#fdeceb;--blue:#3b6cf6;--line:#e6eaf2}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP","Yu Gothic",sans-serif;font-size:15px;line-height:1.6}
+#app{max-width:480px;margin:0 auto;min-height:100vh;padding-bottom:90px}
+h1,h2,h3{margin:0}
+.hero{background:linear-gradient(135deg,var(--pri),var(--pri2));color:#fff;padding:18px 18px 56px;border-radius:0 0 28px 28px}
+.hero .hi{font-size:13px;opacity:.95}
+.hero .cd{display:flex;align-items:baseline;gap:6px;margin-top:4px}
+.hero .cd b{font-size:46px;line-height:1}
+.hero .msg{margin-top:8px;font-size:13px;background:rgba(255,255,255,.2);padding:8px 12px;border-radius:12px}
+.wrap{padding:0 14px}
+.pull{margin-top:-40px}
+.card{background:var(--card);border-radius:18px;padding:16px;margin:12px 0;box-shadow:0 2px 10px rgba(30,40,80,.06)}
+.card h3{font-size:15px;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.sub{color:var(--sub);font-size:12.5px}
+.btn{display:block;width:100%;border:0;border-radius:14px;padding:14px;font-size:16px;font-weight:700;color:#fff;background:linear-gradient(135deg,var(--pri),var(--pri2));box-shadow:0 4px 0 #d9561f;margin-top:10px;cursor:pointer;font-family:inherit}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 #d9561f}
+.btn.g{background:#fff;color:var(--ink);box-shadow:0 2px 0 var(--line);border:1.5px solid var(--line)}
+.btn.b{background:var(--blue);box-shadow:0 4px 0 #2a4fc0}
+.btn.s{font-size:14px;padding:10px}
+.row{display:flex;gap:8px}.row>*{flex:1}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stat{background:#f6f8fc;border-radius:12px;padding:10px;text-align:center}
+.stat b{display:block;font-size:20px}
+.bar{height:10px;background:#e8edf5;border-radius:6px;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:6px;background:linear-gradient(90deg,var(--pri2),var(--pri));transition:width .5s}
+.bar.g i{background:linear-gradient(90deg,#5ad1a0,var(--ok))}
+.bar.bl i{background:linear-gradient(90deg,#7fa0ff,var(--blue))}
+.line{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line)}
+.line:last-child{border:0}
+.line .nm{width:78px;font-size:13px;font-weight:600;flex:none}
+.line .bw{flex:1}
+.line .pc{width:44px;text-align:right;font-size:13px;font-weight:700;flex:none}
+.tb{display:inline-block;font-size:11px;font-weight:700;padding:1px 8px;border-radius:20px;color:#fff;background:#98a2b3}
+.tb.t1{background:#f5a524}.tb.t2{background:#f56e2b}.tb.t3{background:#e5484d}
+.chip{display:inline-block;font-size:12px;padding:2px 10px;border-radius:20px;background:#eef2fb;color:#44506b;margin-right:6px}
+nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:#fff;border-top:1px solid var(--line);display:flex;padding:6px 0 calc(6px + env(safe-area-inset-bottom));z-index:10}
+nav button{flex:1;border:0;background:none;font-size:11px;color:var(--sub);padding:4px;font-family:inherit}
+nav button span{display:block;font-size:22px;line-height:1.2}
+nav button.on{color:var(--pri);font-weight:700}
+input,select{width:100%;padding:13px;border:1.5px solid var(--line);border-radius:12px;font-size:16px;margin-top:6px;font-family:inherit;background:#fff}
+label{font-size:13px;font-weight:600;display:block;margin-top:12px}
+.login{padding:48px 20px}
+.login h1{font-size:30px;text-align:center}
+.seg{display:flex;background:#e9edf5;border-radius:12px;padding:3px;margin:8px 0}
+.seg button{flex:1;border:0;background:none;padding:8px 4px;border-radius:10px;font-size:13px;font-weight:600;color:var(--sub);font-family:inherit}
+.seg button.on{background:#fff;color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.1)}
+.qtop{display:flex;align-items:center;gap:10px;padding:12px 14px}
+.qtop .x{border:0;background:#e9edf5;border-radius:50%;width:34px;height:34px;font-size:16px}
+.prog{flex:1;height:8px;background:#e1e6f0;border-radius:6px;overflow:hidden}.prog i{display:block;height:100%;background:var(--ok);transition:width .3s}
+.qtext{font-size:16.5px;font-weight:600;line-height:1.75;margin:10px 0}
+mark{background:#fff0a8;padding:0 2px;border-radius:3px}
+.ch{display:flex;gap:10px;width:100%;text-align:left;border:1.5px solid var(--line);background:#fff;border-radius:14px;padding:13px;margin-top:9px;font-size:15.5px;font-family:inherit;color:var(--ink)}
+.ch .n{flex:none;width:26px;height:26px;border-radius:50%;background:#eef2fb;font-weight:700;display:flex;align-items:center;justify-content:center;font-size:13px}
+.ch.ok{border-color:var(--ok);background:var(--okbg)}.ch.ok .n{background:var(--ok);color:#fff}
+.ch.ng{border-color:var(--ng);background:var(--ngbg)}.ch.ng .n{background:var(--ng);color:#fff}
+.ch.dim{opacity:.55}
+.fb{border-radius:14px;padding:12px 14px;font-weight:700;margin:10px 0}
+.fb.ok{background:var(--okbg);color:#0b7a50}.fb.ng{background:var(--ngbg);color:#b42318}
+.box{background:#f6f8fc;border-radius:12px;padding:12px;margin-top:10px;font-size:14px}
+.box h4{margin:0 0 4px;font-size:13px;color:var(--sub)}
+.cex{font-size:13.5px;padding:8px 0;border-bottom:1px dashed var(--line)}.cex:last-child{border:0}
+.tfbtn{display:flex;gap:12px;margin-top:12px}.tfbtn button{flex:1;font-size:34px;padding:12px;border-radius:16px;border:2px solid var(--line);background:#fff;font-family:inherit}
+.fig{background:#fff;border:1px solid var(--line);border-radius:12px;padding:6px;margin:8px 0}
+.fig svg{width:100%;height:auto;display:block}
+.big{font-size:54px;text-align:center}
+.tbl{width:100%;border-collapse:collapse;font-size:12.5px}.tbl th,.tbl td{padding:6px 4px;border-bottom:1px solid var(--line);text-align:left}
+.tbl tr.cl{cursor:pointer}
+textarea{width:100%;min-height:90px;padding:10px;border:1.5px solid var(--line);border-radius:12px;font-size:13px;font-family:monospace}
+.toast{background:#1d2433;color:#fff;border-radius:12px;padding:10px 14px;margin:10px 14px;font-size:13px}
+.days{display:flex;gap:6px;align-items:flex-end;height:70px;margin-top:6px}
+.days div{flex:1;text-align:center;font-size:10px;color:var(--sub);display:flex;flex-direction:column;justify-content:flex-end;height:100%}
+.days i{display:block;background:linear-gradient(180deg,var(--pri2),var(--pri));border-radius:5px 5px 0 0;min-height:3px}
+.kb{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding:8px 14px 10px;margin:0 -14px}
+.kcol{flex:0 0 80%;scroll-snap-align:start;background:#e9edf7;border-radius:16px;padding:10px}
+.kcol h4{margin:2px 4px 8px;font-size:14px;display:flex;justify-content:space-between}
+.kc{background:#fff;border-radius:12px;padding:10px;margin-bottom:8px;box-shadow:0 1px 4px rgba(30,40,80,.08);font-size:14px}
+.kc.me{border-left:4px solid var(--blue)}
+.hr{display:flex;align-items:center;gap:6px;margin-bottom:6px}.hr>span{width:42px;font-size:12px;color:var(--sub)}
+.cell{flex:1;height:42px;border-radius:10px;border:1.5px solid var(--line);background:#fff;font-size:11px;color:var(--sub);font-family:inherit;padding:0}
+.cell.study{background:linear-gradient(135deg,var(--pri2),var(--pri));color:#fff;border-color:transparent;font-weight:700}
+.cell.class{background:#dbe4f7;color:#2a3c6b;border-color:#c6d4f2}.cell.sp{background:#e9defb;color:#5b3aa3;border-color:#d8c8f7}
+#tbar{position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;z-index:30;display:none;align-items:center;gap:10px;background:#1d2433;color:#fff;padding:8px 14px;font-size:14px}
+#tbar .p{flex:1;height:6px;background:#475069;border-radius:4px;overflow:hidden}#tbar .p i{display:block;height:100%;width:0;background:var(--pri2)}
+#tbar button{border:0;border-radius:10px;padding:5px 12px;background:#475069;color:#fff;font-family:inherit}
+body.tm #app{padding-top:44px}
+</style>
+</head>
+<body>
+<div id="tbar"></div>
+<div id="app"></div>
+<script>
+/* ================= 設定 ================= */
+const EXAM_DATE='2027-02-21';      // 国家試験日
+const ADMIN_PW='';           // 先生用パスワード（運用時に変更）
+const GAS_URL='https://script.google.com/macros/s/AKfycbxtpKGp293BGR3wJxWOZx_jz4HsKpE_LYgqDI4BKUCkdGooS_Y51qFYuHoGjrtpjassVA/exec';                   // Google Apps ScriptのURLを入れると学習記録を先生用シートに送信
+let AREA_ORDER=['解剖学','生理学','運動学','内部障害','神経系','運動器','発達','精神・心理','評価'];
+
+/* ================= サンプルデータ（本番はadminで差し替え） ================= */
+const FIG1='<svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg"><g stroke="#334155" stroke-width="4" fill="none" stroke-linecap="round"><line x1="70" y1="30" x2="70" y2="120"/><line x1="70" y1="120" x2="170" y2="120"/></g><line x1="70" y1="30" x2="170" y2="120" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="5 4"/><line x1="70" y1="30" x2="190" y2="30" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="2 4"/><line x1="20" y1="185" x2="280" y2="185" stroke="#cbd5e1" stroke-width="5"/><g fill="#ff6b35"><circle cx="70" cy="30" r="5"/><circle cx="70" cy="120" r="5"/><circle cx="170" cy="120" r="5"/></g><g font-size="17" font-weight="700" fill="#0f766e"><text x="44" y="82">ア</text><text x="108" y="144">イ</text><text x="132" y="64">ウ</text><text x="198" y="36">エ</text><text x="150" y="176">オ</text></g><g font-size="12" fill="#64748b"><text x="80" y="24">肩峰</text><text x="14" y="138">外側上顆</text><text x="176" y="116">茎状突起</text></g></svg>';
+const SAMPLE={
+exams:[{id:'A',name:'第1回模試'},{id:'B',name:'第2回模試'}],
+qs:[
+{id:'q01',exam:'A',ses:'午前',no:3,area:'解剖学',q:'大腿四頭筋を支配する神経はどれか。',ch:['閉鎖神経','大腿神経','坐骨神経','上殿神経','脛骨神経'],ans:1,ex:'大腿四頭筋は大腿神経（L2〜L4）の支配である。',cex:['内転筋群を支配する。','大腿四頭筋と縫工筋を支配する。','大腿後面（ハムストリングス）を支配する。','中殿筋・小殿筋・大腿筋膜張筋を支配する。','下腿後面の筋（腓腹筋・ヒラメ筋など）を支配する。'],ask:'筋を支配する神経の名称',askOpts:['筋の起始と停止','筋の作用（運動方向）'],kw:['大腿四頭筋','支配する神経'],cls:88,nat:85,sim:{q:'大腿神経が支配する筋はどれか。',ch:['大腿二頭筋','縫工筋','半膜様筋','長内転筋','中殿筋'],ans:1,ex:'縫工筋は大腿神経支配。大腿二頭筋・半膜様筋は坐骨神経、長内転筋は閉鎖神経、中殿筋は上殿神経。'}},
+{id:'q02',exam:'A',ses:'午前',no:8,area:'解剖学',q:'右心房と右心室の間にある弁はどれか。',ch:['僧帽弁','三尖弁','大動脈弁','肺動脈弁','卵円窩'],ans:1,ex:'右房室弁は三尖弁。左房室弁が僧帽弁である。',cex:['左心房と左心室の間の弁。','右房と右室の間の弁（右房室弁）。','左心室と大動脈の間の弁。','右心室と肺動脈の間の弁。','胎生期の卵円孔の名残で弁ではない。'],ask:'弁の「位置（どこの間か）」',askOpts:['弁の「機能不全の症状」','弁の「聴診部位」'],kw:['右心房','右心室の間'],cls:75,nat:72},
+{id:'q03',exam:'A',ses:'午前',no:15,area:'生理学',q:'交感神経の興奮で起こるのはどれか。',ch:['瞳孔散大','気管支収縮','消化管運動の亢進','心拍数の減少','唾液の大量分泌'],ans:0,ex:'交感神経は「闘争か逃走」。瞳孔散大・心拍数増加・気管支拡張・消化抑制が起こる。',cex:['交感神経で散瞳する。','交感神経では気管支は拡張する。','交感神経では消化管運動は抑制される。','交感神経では心拍数は増加する。','副交感神経で水様の唾液が多く出る。'],ask:'交感神経興奮時の反応',askOpts:['副交感神経興奮時の反応','自律神経の中枢の場所'],kw:['交感神経','興奮'],cls:82,nat:79,sim:{q:'副交感神経の興奮で起こるのはどれか。',ch:['瞳孔散大','心拍数の増加','気管支拡張','縮瞳','消化管運動の抑制'],ans:3,ex:'副交感神経では縮瞳・心拍数減少・気管支収縮・消化促進が起こる。'}},
+{id:'q04',exam:'A',ses:'午前',no:22,area:'生理学',q:'インスリンについて正しいのはどれか。',ch:['膵臓のα細胞から分泌される。','血糖値を上昇させる。','膵臓のβ細胞から分泌される。','脂肪分解を促進する。','副腎皮質から分泌される。'],ans:2,ex:'インスリンは膵ランゲルハンス島のβ細胞から分泌され、血糖を低下させる。',cex:['α細胞はグルカゴンを分泌する。','インスリンは血糖を低下させる。','正しい。β細胞から分泌される。','インスリンは脂肪合成を促進し分解を抑える。','副腎皮質ではコルチゾールなどを分泌する。'],ask:'インスリンの性質（分泌部位・作用）',askOpts:['糖尿病の診断基準','インスリン注射の方法'],kw:['インスリン'],cls:68,nat:64},
+{id:'q05',exam:'A',ses:'午前',no:27,area:'運動学',q:'正常歩行の歩行周期で立脚期が占める割合はどれか。',ch:['約40%','約50%','約60%','約70%','約80%'],ans:2,ex:'立脚期は約60%、遊脚期は約40%である。',cex:['遊脚期の割合である。','両者が同じ割合ではない。','立脚期は約60%。','長すぎる。','長すぎる。'],ask:'歩行周期の「立脚期」の割合',askOpts:['歩行速度の目安','歩幅の正常値'],kw:['立脚期','割合'],cls:91,nat:87,sim:{q:'正常歩行の歩行周期で遊脚期が占める割合はどれか。',ch:['約20%','約30%','約40%','約50%','約60%'],ans:2,ex:'遊脚期は約40%（立脚期が約60%）。'}},
+{id:'q06',exam:'A',ses:'午前',no:31,area:'運動学',q:'股関節の屈曲に作用する筋はどれか。',ch:['大殿筋','腸腰筋','半膜様筋','梨状筋','小円筋'],ans:1,ex:'腸腰筋は股関節屈曲の主動作筋である。',cex:['股関節伸展・外旋に作用する。','股関節屈曲の主動作筋。','股関節伸展・膝関節屈曲に作用する。','股関節外旋に作用する。','肩関節外旋の筋で股関節には作用しない。'],ask:'股関節「屈曲」に働く筋',askOpts:['股関節「伸展」に働く筋','股関節を支配する神経'],kw:['股関節','屈曲'],cls:72,nat:70},
+{id:'q07',exam:'A',ses:'午前',no:38,area:'内部障害',q:'心筋梗塞後の運動療法を中止すべき状態はどれか。',ch:['軽度の息切れ','軽い発汗','胸痛の出現','軽度の疲労感','運動に伴う軽度の心拍数増加'],ans:2,ex:'胸痛（狭心痛）の出現は運動中止基準。',cex:['軽度ならば運動は継続可能なことが多い。','運動に伴う正常反応。','虚血を疑う症状で、直ちに中止する。','運動強度の調整で対応できることが多い。','運動に伴う正常な反応。'],ask:'運動を「中止すべき」状態',askOpts:['運動を「開始してよい」条件','運動の「効果」'],kw:['運動療法','中止'],cls:85,nat:83},
+{id:'q08',exam:'A',ses:'午前',no:45,area:'内部障害',q:'COPD患者の呼吸理学療法で適切なのはどれか。',ch:['口すぼめ呼吸の指導','吸気を呼気より長くする指導','呼吸補助筋を最大限に使わせる','息こらえ運動','過換気を促す深呼吸'],ans:0,ex:'口すぼめ呼吸は呼気時の気道内圧を保ち、気道虚脱と air trapping を防ぐ。',cex:['呼気を長くゆっくり行い、呼吸困難を軽減する。','呼気を吸気より長くする。','呼吸補助筋の過剰使用はエネルギー消費を増やす。','息こらえは負荷を高める。','過換気は動的肺過膨張を悪化させる。'],ask:'COPDに「適切な」呼吸理学療法',askOpts:['COPDの診断基準','COPDの病態'],kw:['COPD','呼吸理学療法','適切'],cls:66,nat:61},
+{id:'q09',exam:'A',ses:'午前',no:52,area:'神経系',q:'右中大脳動脈領域の脳梗塞で起こりやすいのはどれか。',ch:['失語症','右片麻痺','左半側空間無視','純粋失読','ゲルストマン症候群'],ans:2,ex:'右半球（劣位半球）の障害で左半側空間無視が起こる。',cex:['通常は左半球（優位半球）の障害。','右半球の障害では左片麻痺。','右頭頂葉障害で起こる。','左後頭葉〜脳梁膨大部の障害。','優位半球（左）の角回付近の障害。'],ask:'右半球障害で出る症状',askOpts:['左半球障害で出る症状','脳梗塞の治療法'],kw:['右中大脳動脈','脳梗塞'],cls:79,nat:76,sim:{q:'左中大脳動脈領域の脳梗塞で起こりやすいのはどれか。',ch:['左半側空間無視','病態失認','運動性失語','着衣失行','地誌的見当識障害'],ans:2,ex:'左（優位）半球の障害では運動性失語（ブローカ失語）が起こりやすい。他は右半球症状。'}},
+{id:'q10',exam:'A',ses:'午前',no:60,area:'神経系',q:'パーキンソン病の症状でないのはどれか。',ch:['安静時振戦','筋強剛','無動・寡動','姿勢反射障害','企図振戦'],ans:4,ex:'企図振戦は小脳障害の症状。パーキンソン病は安静時振戦。',cex:['パーキンソン病の症状。','パーキンソン病の症状。','パーキンソン病の症状。','パーキンソン病の症状。','小脳性。目標に近づくほど増強する。'],ask:'パーキンソン病に「あてはまらない」症状',askOpts:['パーキンソン病の治療薬','パーキンソン病の原因部位'],kw:['パーキンソン病','でない'],cls:74,nat:null},
+{id:'q11',exam:'B',ses:'午後',no:2,area:'運動器',q:'人工骨頭置換術後（後方アプローチ）に脱臼しやすい肢位はどれか。',ch:['伸展・外転・外旋','屈曲・内転・内旋','屈曲・外転・外旋','伸展・内転・外旋','外転・内旋'],ans:1,ex:'後方アプローチでは屈曲・内転・内旋で後方脱臼しやすい。',cex:['前方脱臼しやすい肢位に近い。','後方脱臼の肢位。','脱臼しにくい。','前方脱臼しやすい肢位。','後方脱臼は屈曲を伴う場合に起こりやすい。'],ask:'「後方」アプローチで脱臼しやすい肢位',askOpts:['前方アプローチで脱臼しやすい肢位','術後の荷重開始時期'],kw:['後方アプローチ','脱臼しやすい'],cls:83,nat:80,sim:{q:'人工骨頭置換術後（前方アプローチ）に脱臼しやすい肢位はどれか。',ch:['屈曲・内転・内旋','伸展・外転・内旋','伸展・内転・外旋','屈曲・外転・外旋','屈曲・内転・外旋'],ans:2,ex:'前方アプローチでは伸展・内転・外旋で前方脱臼しやすい。'}},
+{id:'q12',exam:'B',ses:'午後',no:9,area:'運動器',q:'骨粗鬆症について正しいのはどれか。',ch:['男性に多い。','閉経後の女性に多い。','骨密度は増加する。','血清カルシウムが著明な高値となる。','椎体骨折はまれである。'],ans:1,ex:'エストロゲン低下により閉経後女性に多い。',cex:['女性に多い。','正しい。','骨密度は低下する。','原発性では血清Caは通常正常。','椎体骨折は代表的な骨折。'],ask:'骨粗鬆症の疫学・特徴',askOpts:['骨粗鬆症の運動療法','骨粗鬆症の薬物'],kw:['骨粗鬆症','正しい'],cls:78,nat:75},
+{id:'q13',exam:'B',ses:'午後',no:14,area:'発達',q:'定型発達児で定頸が完成する時期はどれか。',ch:['1〜2か月','3〜4か月','6〜7か月','9〜10か月','12〜13か月'],ans:1,ex:'定頸は生後3〜4か月で完成する。',cex:['早い。','正しい。','寝返り〜お座りの時期。','つかまり立ちの時期。','独歩の時期。'],ask:'「定頸」が完成する月齢',askOpts:['「寝返り」の月齢','「独歩」の月齢'],kw:['定頸'],cls:77,nat:73},
+{id:'q14',exam:'B',ses:'午後',no:19,area:'発達',q:'痙直型両麻痺の脳性麻痺児の特徴はどれか。',ch:['上肢優位の痙縮','下肢優位の痙縮','不随意運動','運動失調','筋緊張の低下'],ans:1,ex:'痙直型両麻痺は下肢優位の痙縮が特徴（未熟児・PVLに多い）。',cex:['両麻痺は下肢優位。','正しい。','アテトーゼ型の特徴。','失調型の特徴。','低緊張型の特徴。'],ask:'痙直型両麻痺の特徴',askOpts:['アテトーゼ型の特徴','脳性麻痺の原因'],kw:['痙直型両麻痺'],cls:62,nat:null},
+{id:'q15',exam:'B',ses:'午後',no:33,area:'精神・心理',q:'統合失調症の陽性症状はどれか。',ch:['感情鈍麻','意欲低下','幻覚','思考の貧困','社会的引きこもり'],ans:2,ex:'幻覚・妄想は陽性症状。感情鈍麻や意欲低下は陰性症状。',cex:['陰性症状。','陰性症状。','陽性症状。','陰性症状。','陰性症状。'],ask:'「陽性」症状はどれか',askOpts:['「陰性」症状はどれか','統合失調症の治療薬'],kw:['統合失調症','陽性症状'],cls:86,nat:84,sim:{q:'統合失調症の陰性症状はどれか。',ch:['幻聴','被害妄想','感情鈍麻','させられ体験','思考吹入'],ans:2,ex:'感情鈍麻は陰性症状。他は陽性症状。'}},
+{id:'q16',exam:'B',ses:'午後',no:41,area:'精神・心理',q:'うつ病エピソードの中核症状はどれか。',ch:['誇大妄想','多弁','抑うつ気分と興味・喜びの喪失','観念奔逸','睡眠欲求の減少'],ans:2,ex:'抑うつ気分と興味・喜びの喪失が中核症状。他は躁状態にみられる。',cex:['躁状態。','躁状態。','中核症状。','躁状態。','躁状態。'],ask:'うつ病の「中核症状」',askOpts:['躁病の症状','うつ病の治療'],kw:['うつ病','中核症状'],cls:70,nat:66},
+{id:'q17',exam:'B',ses:'午後',no:48,area:'評価',q:'徒手筋力テスト（MMT）の段階3の判定基準はどれか。',ch:['筋収縮のみ認める','重力を除くと全可動域動かせる','重力に抗して全可動域動かせる','軽い抵抗に抗して全可動域動かせる','最大抵抗に抗して全可動域動かせる'],ans:2,ex:'MMT 3：重力に抗して全可動域動かせる。',cex:['MMT 1。','MMT 2。','MMT 3。','MMT 4。','MMT 5。'],ask:'MMT「3」の基準',askOpts:['MMT「2」の基準','MMTの肢位'],kw:['MMT','段階3'],cls:72,nat:68},
+{id:'q18',exam:'B',ses:'午後',no:18,area:'評価',q:'図は肘関節屈曲の関節可動域測定を示す。基本軸を示すのはどれか。',fig:FIG1,ch:['ア','イ','ウ','エ','オ'],ans:0,ex:'肘関節屈曲の基本軸は上腕骨（肩峰と上腕骨外側上顆を結ぶ線）。移動軸は橈骨。',cex:['上腕骨＝基本軸。','前腕＝移動軸。','肩峰と手関節を結ぶ線は使わない。','水平線は基本軸ではない。','床面は基準にならない。'],ask:'ROM測定の「基本軸」',askOpts:['ROM測定の「移動軸」','ROMの参考可動域'],kw:['肘関節屈曲','基本軸'],cls:58,nat:52},
+{id:'q19',exam:'B',ses:'午後',no:5,area:'評価',q:'Barthel Index で評価するのはどれか。',ch:['認知機能','バランス能力','疼痛','日常生活活動（ADL）','筋力'],ans:3,ex:'Barthel Indexは基本的ADLの評価。',cex:['MMSEなど。','BBSなど。','VASなど。','正しい。','MMTなど。'],ask:'Barthel Indexで測るもの',askOpts:['FIMで測るもの','Barthel Indexの点数の意味'],kw:['Barthel Index'],cls:90,nat:88}
+],
+students:[]};
+function mk(wA,wB){const r={};SAMPLE.qs.forEach(q=>{const n=+q.id.slice(1);r[q.id]=(q.exam==='A'?wA:wB).includes(n)?0:1});return r}
+SAMPLE.students=[{id:'1001',name:'山田花子',res:mk([1,2,3,5,7,9,10],[11,13,15,16])},{id:'1002',name:'佐藤健',res:mk([4,8,9,6],[12,14,17,18])},{id:'1003',name:'鈴木愛',res:mk([2,5],[15,17,19])}];
+
+/* ================= 基盤 ================= */
+const mem={};
+const store={get(k,d){try{const v=localStorage.getItem(k);if(v!==null)return JSON.parse(v)}catch(e){}return k in mem?mem[k]:d},set(k,v){mem[k]=v;try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const pad=n=>String(n).padStart(2,'0');
+const dstr=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const today=()=>dstr(new Date());
+const norm=s=>String(s).replace(/[０-９]/g,c=>String.fromCharCode(c.charCodeAt(0)-65248)).replace(/[\s　]/g,'').toLowerCase();
+const rnd=a=>a[Math.floor(Math.random()*a.length)];
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+function hl(t,k){let s=esc(t);(k||[]).forEach(w=>{const e=esc(w);s=s.split(e).join('<mark>'+e+'</mark>')});return s}
+let DATA=store.get('kd_data',null)||SAMPLE;
+let me=null,U=null,sess=null;
+let ui={screen:'login',ex:'all',f:{exam:'all',ses:'all',prac:false,area:'all',only:'need'},msg:null,admin:false,sel:null};
+
+const TIER=['通常','優先','最優先','超優先'];
+const tier=r=>r>=80?3:r>=70?2:r>=60?1:0;
+const tb=n=>`<span class="tb t${n}">${TIER[n]}</span>`;
+const rate=q=>Math.max(q.cls||0,q.nat||0); // 学内・全国どちらか高い方
+const AR=()=>{const s=new Set(DATA.qs.map(q=>q.area));return [...AREA_ORDER.filter(a=>s.has(a)),...[...s].filter(a=>!AREA_ORDER.includes(a))]};
+const examName=id=>(DATA.exams.find(e=>e.id===id)||{name:id}).name;
+const stq=q=>U.q[q.id]||{streak:0,tries:0,wrong:0};
+const mockWrong=q=>me.res[q.id]===0;
+const need=q=>(mockWrong(q)||stq(q).wrong>0)&&stq(q).streak<2;
+const needList=f=>DATA.qs.filter(q=>need(q)&&(!f||f(q))).sort((a,b)=>tier(rate(b))-tier(rate(a))||rate(b)-rate(a));
+const saveU=()=>{store.set('kd_u_'+me.id,U);cloudPushU()};
+function areaStat(a){const qs=DATA.qs.filter(q=>q.area===a&&rate(q)>=60);const rem=qs.filter(need);const w=rem.reduce((s,q)=>s+tier(rate(q)),0);return{total:qs.length,rem:rem.length,w,done:qs.length-rem.length,pct:qs.length?Math.round((qs.length-rem.length)/qs.length*100):100}}
+function mockAcc(ex,area){let n=0,c=0;DATA.qs.forEach(q=>{if((ex==='all'||q.exam===ex)&&(!area||q.area===area)){const r=me.res[q.id];if(r!==undefined){n++;c+=r}}});return{n,c,pct:n?Math.round(c/n*100):null}}
+function appAcc(area,last){const qm=Object.fromEntries(DATA.qs.map(q=>[q.id,q]));let l=U.log.filter(x=>!x.chal&&qm[x.qid]&&qm[x.qid].area===area);if(last)l=l.slice(-last);const c=l.filter(x=>x.ok).length;return{n:l.length,pct:l.length?Math.round(c/l.length*100):null}}
+function streakDays(){let n=0;const d=new Date();if(!U.days[dstr(d)])d.setDate(d.getDate()-1);while(U.days[dstr(d)]){n++;d.setDate(d.getDate()-1)}return n}
+const fmtMin=s=>s<60?s+'秒':Math.round(s/60)+'分';
+const PRAISE=['ナイス！その調子！','いいね、ちゃんと身についてきてる！','正解！1歩ずつ確実に前進中！','すごい！この感覚を覚えておこう！','よくできました！'];
+const GENTLE=['おしい！間違えた問題こそ伸びしろ。','ここで気づけてラッキー！次は取れる！','大丈夫、解説を見て次に活かそう。','間違いは成長のチャンス！'];
+const MOTIV=['今日の1問が、合格への1歩。','コツコツは最強の武器。','苦手が得意に変わる瞬間を楽しもう。','昨日の自分より1問多く。','やった分だけ、必ず力になる。'];
+
+/* ================= ログイン ================= */
+async function login(){
+ if(GAS_URL){const rs=$('#sid').value.trim(),rn=$('#nm').value.trim();const btn=document.querySelector('.login .btn');if(btn){btn.disabled=true;btn.textContent='確認中…'}
+  try{const r=await gas({a:'login',sid:rs,name:rn});
+   if(r.ok){const s=r.s;const i=DATA.students.findIndex(x=>x.id===s.id);if(i>=0)DATA.students[i]=s;else DATA.students.push(s);saveStudents();GASAUTH={sid:rs,name:rn};
+    me=s;U=store.get('kd_u_'+s.id,{q:{},log:[],days:{}});const lt=a=>a&&a.log&&a.log.length?a.log[a.log.length-1].ts:0;if(r.U&&lt(r.U)>lt(U))U=Object.assign({q:{},log:[],days:{}},r.U);
+    initU();store.set('kd_u_'+s.id,U);store.set('kd_last',s.id);ui.msg=null;go('home');if(lt(U)>lt(r.U||{}))cloudPushU();pullPeers();return}
+   ui.msg=r.error==='notfound'?'学籍番号と名前の組み合わせが見つかりません。もう一度確認してください。':'サーバーに接続できませんでした（'+(r.error||'')+'）';render();return
+  }catch(e){if(btn){btn.disabled=false;btn.textContent='はじめる'}}
+ }
+ const sid=norm($('#sid').value),nm=norm($('#nm').value);
+ const s=DATA.students.find(x=>norm(x.name)===nm&&(!x.sid||norm(x.sid)===sid));
+ if(!s){ui.msg=DATA.students.length?'名前が見つかりません（学籍番号が登録済みの場合は一致が必要です）。':'まだ成績が取り込まれていません。先生に確認してください。';render();return}
+ me=s;U=store.get('kd_u_'+s.id,{q:{},log:[],days:{}});initU();store.set('kd_last',s.id);ui.msg=null;go('home');cloudPullU();
+}
+function logout(){me=null;U=null;sess=null;ui.admin=false;go('login')}
+function go(s){ui.screen=s;if(s!=='login')ui.msg=null;render();window.scrollTo(0,0)}
+
+/* ================= 記録 ================= */
+function record(q,ok,sec,mode,chal){
+ const t=today();U.days[t]=U.days[t]||{n:0,sec:0};U.days[t].n++;U.days[t].sec+=sec;
+ U.log.push({qid:q.id,ok:ok?1:0,sec,mode,chal:chal?1:0,ts:Date.now()});
+ if(U.log.length>3000)U.log=U.log.slice(-3000);
+ if(!chal){const s=U.q[q.id]||(U.q[q.id]={streak:0,tries:0,wrong:0});s.tries++;if(ok)s.streak++;else{s.streak=0;s.wrong++}}
+ saveU();
+}
+
+/* ================= 出題セッション ================= */
+function startSession(ids,mode,title,chal){
+ if(!ids.length){ui.msg='この条件の問題はありません。条件を変えてみよう。';render();return}
+ sess={queue:ids.map(id=>({id,chal:!!chal,rep:0})),i:0,mode,title,correct:0,sec:0,newM:0,wrongIds:[],answered:0};
+ resetQ();ui.screen='quiz';render();window.scrollTo(0,0);
+}
+function resetQ(){Object.assign(sess,{phase:'ans',t0:Date.now(),pick:null,sel:[],ok:null,askPick:null,hint:false,tfI:0,tf:[],tfShow:false,msg:'',askOpts:null})}
+const A=q=>Array.isArray(q.ans)?q.ans:[q.ans];
+const pickN=q=>q.pick||A(q).length;
+const okSets=q=>[A(q),...(q.alt||[])];
+const allOk=q=>[...new Set(okSets(q).flat())];
+const isOk=(q,arr)=>{const g=[...arr].sort().join();return okSets(q).some(o=>[...o].sort().join()===g)};
+function curQ(){const e=sess.queue[sess.i];const b=DATA.qs.find(q=>q.id===e.id);if(e.chal){const s=b.sim;return{...b,id:b.id+'s',q:s.q,ch:s.ch,ans:s.ans,alt:null,pick:1,ex:s.ex,cex:null,fig:null,imgs:null,_chal:true,_base:b}}return b}
+function askInfoFor(b){
+ if(b.ask&&b.askOpts)return{correct:b.ask,opts:shuffle([b.ask,...b.askOpts])};
+ if(!b.kw||!b.kw.length)return null;
+ const correct=b.kw.join('・');const pool=DATA.qs.filter(x=>x.id!==b.id&&x.kw&&x.kw.length&&x.kw.join('・')!==correct);
+ const d=[...shuffle(pool.filter(x=>x.area===b.area)),...shuffle(pool.filter(x=>x.area!==b.area))].slice(0,2).map(x=>x.kw.join('・'));
+ return d.length?{correct,opts:shuffle([correct,...d])}:null;
+}
+function choose(i){const q=curQ();if(pickN(q)<=1){pick([i]);return}const k=sess.sel.indexOf(i);if(k>=0)sess.sel.splice(k,1);else if(sess.sel.length<pickN(q))sess.sel.push(i);render()}
+function submitSel(){const q=curQ();if(sess.sel.length===pickN(q))pick([...sess.sel])}
+function pick(arr){
+ const q=curQ(),e=sess.queue[sess.i],base=q._base||q;
+ const sec=Math.min(600,Math.round((Date.now()-sess.t0)/1000));const ans=A(q);
+ const ok=isOk(q,arr);
+ const before=!e.chal&&need(base);
+ record(base,ok,sec,sess.mode,e.chal);
+ const after=!e.chal&&need(base);
+ sess.pick=arr;sess.ok=ok;sess.sec+=sec;sess.answered++;
+ if(ok)sess.correct++;else if(!sess.wrongIds.includes(base.id))sess.wrongIds.push(base.id);
+ let m=ok?rnd(PRAISE):rnd(GENTLE);
+ if(before&&!after){sess.newM++;m='🎉 この問題を制覇！'}
+ if(e.chal&&ok)m='🌟 チャレンジ成功！応用力がついてきた！';
+ sess.msg=m;
+ if(!ok&&!e.chal&&e.rep<2)sess.queue.splice(Math.min(sess.i+4,sess.queue.length),0,{id:e.id,chal:false,rep:e.rep+1});
+ sess.askInfo=ok?null:askInfoFor(base);
+ sess.phase=(ok||!sess.askInfo)?'exp':'ask';
+ render();window.scrollTo(0,0);
+}
+function askPick(j){sess.askPick=j;render()}
+function toExp(){sess.phase='exp';render();window.scrollTo(0,0)}
+function toggleHint(){sess.hint=!sess.hint;render()}
+function startTF(){sess.phase='tf';sess.tfI=0;sess.tf=[];sess.tfShow=false;render();window.scrollTo(0,0)}
+function tfPick(v){const q=curQ();const truth=allOk(q).includes(sess.tfI);sess.tf[sess.tfI]={v,right:v===truth};sess.tfShow=true;render()}
+function tfNext(){const q=curQ();if(sess.tfI+1>=q.ch.length){sess.phase='tfdone'}else{sess.tfI++;sess.tfShow=false}render();window.scrollTo(0,0)}
+function nextQ(){if(sess.i+1>=sess.queue.length){ui.screen='result'}else{sess.i++;resetQ()}render();window.scrollTo(0,0)}
+function quit(){go('home')}
+const figHtml=q=>{let h='';if(q.fig)h+=`<div class="fig">${q.fig}</div>`;(q.imgs||[]).forEach(s=>{h+=`<div class="fig"><img src="${esc(s)}" loading="lazy" onclick="zoom(this.src)" style="width:100%;display:block"></div>`});return (q.imgs&&q.imgs.length?'<div class="sub">画像をタップで拡大</div>':'')+h};
+function zoom(src){const d=document.createElement('div');d.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:99;overflow:auto;padding:10px';d.innerHTML=`<div style="color:#fff;font-size:13px;margin-bottom:6px">タップで閉じる</div><img src="${src}" style="width:220%;max-width:none;background:#fff">`;d.onclick=()=>d.remove();document.body.appendChild(d)}
+const chips=k=>(k||[]).map(x=>`<mark>${esc(x)}</mark>`).join(' ');
+function keyBox(b){return b.ask?`<div class="box"><h4>問題のカギ</h4>問われていたのは「<b>${esc(b.ask)}</b>」　${chips(b.kw)}</div>`:((b.kw&&b.kw.length)?`<div class="box"><h4>この問題のキーワード</h4>${chips(b.kw)}</div>`:'')}
+
+function quizView(){
+ const q=curQ(),base=q._base||q,e=sess.queue[sess.i],ans=A(q),multi=pickN(q)>1;
+ const total=sess.queue.length,pg=Math.round(sess.i/total*100);
+ const showKw=sess.hint||sess.phase!=='ans';
+ const lab=(c,i)=>base.imgchoice&&!q._chal?`図の選択肢 ${i+1}`:esc(c);
+ let h=`<div class="qtop"><button class="x" onclick="quit()">✕</button><div class="prog"><i style="width:${pg}%"></i></div><span class="sub">${sess.i+1}/${total}</span></div><div class="wrap">`;
+ h+=`<div class="card"><div><span class="chip">${esc(base.area)}</span><span class="chip">${esc(examName(base.exam))} ${esc(base.ses)}${base.no}</span>${e.chal?'<span class="tb t2">チャレンジ</span>':(need(base)?tb(tier(rate(base))):'')}${e.rep?'<span class="chip">もう一度</span>':''}${multi?`<span class="tb t2">${pickN(q)}つ選ぶ</span>`:''}${sess.phase==='ans'?'<span class="chip" id="tm" style="float:right">0秒</span>':''}</div>`;
+ h+=`<div class="qtext">${hl(q.q,showKw?base.kw:[])}</div>${figHtml(q)}`;
+ if(sess.phase==='ans'){
+  h+=q.ch.map((c,i)=>`<button class="ch ${sess.sel.includes(i)?'ok':''}" onclick="choose(${i})"><span class="n">${i+1}</span><span>${lab(c,i)}</span></button>`).join('');
+  if(multi)h+=`<button class="btn ${sess.sel.length===pickN(q)?'':'g'} s" onclick="submitSel()">回答する（${sess.sel.length}/${pickN(q)}）</button>`;
+  if(base.ask||(base.kw&&base.kw.length)){
+   h+=`<button class="btn g s" onclick="toggleHint()">🔍 ${sess.hint?'ヒントをとじる':'問題のカギを見る（何を聞かれている？）'}</button>`;
+   if(sess.hint)h+=base.ask?`<div class="box"><h4>この問題で問われていること</h4><b>${esc(base.ask)}</b><div class="sub" style="margin-top:4px">黄色のキーワードに注目して選択肢を読もう</div></div>`:`<div class="box"><h4>この問題のテーマ（キーワード）</h4>${chips(base.kw)}<div class="sub" style="margin-top:4px">このテーマの知識を思い出して選ぼう</div></div>`;
+  }
+ }else{
+  h+=q.ch.map((c,i)=>`<div class="ch ${allOk(q).includes(i)?'ok':(sess.pick.includes(i)?'ng':'dim')}"><span class="n">${i+1}</span><span>${lab(c,i)}</span></div>`).join('');
+  h+=`<div class="fb ${sess.ok?'ok':'ng'}">${sess.ok?'⭕ 正解！':'❌ 不正解（正解は '+ans.map(x=>x+1).join('・')+(q.alt&&q.alt.length?'、または '+q.alt.map(o=>o.map(x=>x+1).join('・')).join('／'):'')+'）'}　${esc(sess.msg)}</div>`;
+ }
+ h+='</div>';
+ if(sess.phase==='ask'){
+  const ai=sess.askInfo;
+  h+=`<div class="card"><h3>🔍 まず確認：この問題が聞いているテーマは？</h3><div class="sub">設問を読み違えていないかチェックしよう</div>`;
+  ai.opts.forEach((o,j)=>{let c='';if(sess.askPick!==null){c=o===ai.correct?'ok':(j===sess.askPick?'ng':'dim')}h+=`<button class="ch ${c}" ${sess.askPick===null?`onclick="askPick(${j})"`:''}><span class="n">${'ABC'[j]}</span><span>${esc(o)}</span></button>`});
+  if(sess.askPick!==null){h+=`<div class="box"><h4>${ai.opts[sess.askPick]===ai.correct?'その通り！':'正しくはこちら'}</h4>この問題のテーマは「<b>${esc(ai.correct)}</b>」。${chips(base.kw)}</div><button class="btn" onclick="toExp()">解説を見る</button>`}
+  h+='</div>';
+ }
+ if(sess.phase==='exp'){
+  const showCex=!sess.ok&&q.cex&&q.cex.some(x=>x);
+  h+=`<div class="card"><h3>📘 解説</h3>`;
+  if(!showCex)h+=`<div style="font-size:14px">${esc(q.ex||'（解説は準備中です）')}</div>`;
+  h+=keyBox(base);
+  if(showCex)h+=`<div class="box"><h4>選択肢ごとの解説</h4>${q.cex.map((c,i)=>`<div class="cex"><b>${i+1}.</b> ${esc(q.ch[i])}<br><span class="sub">${allOk(q).includes(i)?'⭕ ':'✖ '}${esc(c||'')}</span></div>`).join('')}</div>`;
+  if(!sess.ok)h+=`<button class="btn b" onclick="startTF()">⭕❌ 5択がむずかしい？ ○×で1つずつ確認</button>`;
+  h+=`<button class="btn g s" onclick="apptQ()">👩‍🏫 この問題を先生に質問する</button><button class="btn" onclick="nextQ()">${sess.i+1>=sess.queue.length?'結果を見る':'つぎへ'} ▶</button></div>`;
+ }
+ if(sess.phase==='tf'){
+  const t=sess.tfI;
+  h+=`<div class="card"><h3>⭕❌ ○×チェック ${t+1}/${q.ch.length}</h3><div class="sub">${multi?'この選択肢は、正解に含まれる？':'この選択肢は、問題の答えとして正しい？'}</div><div class="box" style="font-size:16px;font-weight:600">${lab(q.ch[t],t)}</div>`;
+  if(!sess.tfShow){h+=`<div class="tfbtn"><button onclick="tfPick(true)">⭕</button><button onclick="tfPick(false)">❌</button></div>`}
+  else{const r=sess.tf[t];const truth=allOk(q).includes(t);const note=q.cex&&q.cex[t]?q.cex[t]:'';h+=`<div class="fb ${r.right?'ok':'ng'}">${r.right?'正解！':'おしい！'} この選択肢は${truth?'⭕（正解に含まれる）':'❌（正解ではない）'}</div>${note?`<div class="box">${esc(note)}</div>`:''}<button class="btn" onclick="tfNext()">${t+1>=q.ch.length?'まとめを見る':'つぎの選択肢'} ▶</button>`}
+  h+='</div>';
+ }
+ if(sess.phase==='tfdone'){
+  const c=sess.tf.filter(x=>x.right).length;
+  h+=`<div class="card"><h3>✨ ○×チェック完了</h3><div class="big">${c}/${q.ch.length}</div><div style="text-align:center">${c===q.ch.length?'全部わかった！5択でも自信を持って！':'1つずつ見ると理解が深まるね。もう一度5択に挑戦しよう！'}</div><button class="btn" onclick="nextQ()">${sess.i+1>=sess.queue.length?'結果を見る':'つぎへ'} ▶</button></div>`;
+ }
+ return h+'</div>';
+}
+
+function resultView(){
+ const s=sess,pc=s.answered?Math.round(s.correct/s.answered*100):0;
+ const m=pc>=80?'すばらしい！この調子で苦手を倒していこう！':pc>=50?'いい感じ！間違えた分だけ伸びしろがあるよ。':'ここからが伸びどころ！間違えた問題が次の得点源になる。';
+ return `<div class="hero" style="padding-bottom:30px"><div class="hi">${esc(s.title)}　おつかれさま！</div><div class="cd"><b>${pc}</b><span>% 正解</span></div><div class="msg">${m}</div></div><div class="wrap"><div class="card"><div class="grid3"><div class="stat"><b>${s.correct}/${s.answered}</b><span class="sub">正解</span></div><div class="stat"><b>${fmtMin(s.sec)}</b><span class="sub">所要時間</span></div><div class="stat"><b>${s.newM}</b><span class="sub">新たに制覇</span></div></div>${s.newM?`<div class="fb ok" style="margin-top:12px">🎉 ${s.newM}問を制覇しました！</div>`:''}
+ ${s.wrongIds.length?`<button class="btn b" onclick="retryWrong()">❌ 間違えた${s.wrongIds.length}問をもう一度</button>`:''}
+ <button class="btn" onclick="startRecommend()">つづけて挑戦 ▶</button><button class="btn g" onclick="go('home')">ホームへ</button></div></div>`;
+}
+function retryWrong(){const ids=[...sess.wrongIds];startSession(ids,'retry','間違えた問題をもう一度')}
+
+/* ================= 出題の入口 ================= */
+function mission(){
+ let best=null;AR().forEach(a=>{const l=needList(q=>q.area===a&&rate(q)>=60);if(l.length){const w=l.reduce((s,q)=>s+tier(rate(q)),0);if(!best||w>best.w)best={area:a,list:l.slice(0,10),w}}});return best;
+}
+function startMission(){const m=mission();if(m)startSession(m.list.map(q=>q.id),'mission','今日の課題：'+m.area);else startChallenge()}
+function startRecommend(){const l=needList().slice(0,10);if(l.length)startSession(l.map(q=>q.id),'recommend','今日のおすすめ');else startChallenge()}
+function startReview(){const l=needList();startSession(l.slice(0,20).map(q=>q.id),'review','間違えた問題の復習')}
+function startChallenge(){const l=shuffle(DATA.qs.filter(q=>q.sim));if(!l.length){ui.msg='類似問題のチャレンジは準備中です（これから追加されます）';render();return}startSession(l.slice(0,10).map(q=>q.id),'challenge','チャレンジ（類似問題）',true)}
+function startArea(a){const l=needList(q=>q.area===a);const ids=l.length?l:DATA.qs.filter(q=>q.area===a);startSession(ids.slice(0,20).map(q=>q.id),'area','領域：'+a)}
+function startFilter(){
+ const f=ui.f;let l=DATA.qs.filter(q=>(f.exam==='all'||q.exam===f.exam)&&(f.ses==='all'||q.ses===f.ses)&&(!f.prac||q.no<=20)&&(f.area==='all'||q.area===f.area));
+ if(f.only==='need'){l=l.filter(need).sort((a,b)=>tier(rate(b))-tier(rate(a))||rate(b)-rate(a))}else{l=l.sort((a,b)=>a.exam.localeCompare(b.exam)||a.ses.localeCompare(b.ses)||a.no-b.no)}
+ startSession(l.slice(0,20).map(q=>q.id),'filter','えらんだ条件');
+}
+function setF(k,v){ui.f[k]=v;render()}
+
+/* ================= 画面 ================= */
+function nav(a){const it=[['home','🏠','ホーム'],['menu','✏️','問題'],['board','🗂️','ボード'],['plan','🗓️','計画'],['analysis','📊','分析']];return `<nav>${it.map(x=>`<button class="${a===x[0]?'on':''}" onclick="go('${x[0]}')"><span>${x[1]}</span>${x[2]}</button>`).join('')}</nav>`}
+const toast=()=>ui.msg?`<div class="toast">${esc(ui.msg)}</div>`:'';
+function bars(rows,cls){return rows.map(r=>`<div class="line"><div class="nm">${esc(r.n)}</div><div class="bw"><div class="bar ${cls||''}"><i style="width:${r.p}%"></i></div></div><div class="pc">${r.t}</div></div>`).join('')}
+
+function loginView(){
+ return `<div class="login"><div class="big">🦴</div><h1>国試ドリル</h1><p class="sub" style="text-align:center">理学療法士国家試験　あなた専用のドリル</p><div class="card"><label>学籍番号</label><input id="sid" inputmode="numeric" autocomplete="off" placeholder="例）12345678"><label>名前</label><input id="nm" autocomplete="off" placeholder="例）国試 太郎"><button class="btn" onclick="login()">はじめる</button>${ui.msg?`<div class="fb ng">${esc(ui.msg)}</div>`:''}</div>${BANK?"":`<p class="sub" style="text-align:center">デモ：1001 山田花子 ／ 1002 佐藤健 ／ 1003 鈴木愛</p>`}<p style="text-align:center"><a href="#" class="sub" onclick="go('adminlogin');return false">先生用</a></p></div>`;
+}
+function homeView(){
+ const days=Math.ceil((new Date(EXAM_DATE+'T00:00:00')-new Date(today()+'T00:00:00'))/864e5);
+ const td=U.days[today()]||{n:0,sec:0};const ms=mission();
+ const areas=AR().map(a=>({a,...areaStat(a)}));
+ const tot=areas.reduce((s,x)=>s+x.total,0),don=areas.reduce((s,x)=>s+x.done,0),all=tot?Math.round(don/tot*100):0;
+ const top5=areas.filter(x=>x.rem>0).sort((x,y)=>y.w-x.w||y.rem-x.rem).slice(0,5);
+ const gr=AR().map(a=>{const m=mockAcc('all',a),p=appAcc(a,10);return{a,d:(p.n>=3&&m.n>0)?p.pct-m.pct:null,p:p.pct}}).filter(x=>x.d!==null&&x.d>0).sort((x,y)=>y.d-x.d).slice(0,3);
+ const weak=AR().map(a=>({a,...mockAcc('all',a)})).filter(x=>x.n>0).sort((x,y)=>x.pct-y.pct).slice(0,3);
+ const dI=Math.floor(Date.now()/864e5);
+ let h=`<div class="hero"><div class="hi">${esc(me.name)}さん、こんにちは！</div><div class="cd">国試まであと<b>${days>=0?days:0}</b>日</div><div class="msg">${MOTIV[dI%MOTIV.length]}</div></div><div class="wrap pull">${toast()}`;
+ h+=`<div class="card"><h3>🎯 今日の課題</h3>`;
+ if(ms){const t=tier(rate(ms.list[0]));h+=`<div style="font-size:17px;font-weight:700">【${esc(ms.area)}】の${tb(t)}問題を${ms.list.length}問、制覇しよう！</div><div class="sub" style="margin-top:4px">学内・全国どちらかの正答率が60%以上の問題を取りこぼさないことが、合格への近道です。</div><div class="bar" style="margin-top:10px"><i style="width:${Math.min(100,td.n*10)}%"></i></div><div class="sub">今日 ${td.n}問 / 目標10問</div><button class="btn" onclick="startMission()">今日の課題をはじめる ▶</button>`}
+ else{h+=`<div style="font-weight:700">🏆 優先問題はすべて制覇！</div><div class="sub">チャレンジ（類似問題）で実力を試そう。</div><button class="btn" onclick="startChallenge()">チャレンジに挑戦 ▶</button>`}
+ h+='</div>';
+ h+=todayCard();
+ h+=`<div class="card"><h3>⭐ 今日のおすすめ</h3><button class="btn g s" onclick="startRecommend()">🔥 優先度の高い問題から10問</button><button class="btn g s" onclick="startReview()">🔁 間違えた問題をくり返し</button><button class="btn g s" onclick="startChallenge()">🚀 チャレンジ（類似問題）</button><button class="btn g s" onclick="go('plan')">👩‍🏫 先生にアポをとる</button></div>`;
+ h+=`<div class="card"><h3 onclick="go('records')" style="cursor:pointer">💪 今日の頑張り <span class="sub" style="margin-left:auto">記録を見る ›</span></h3><div class="grid3"><div class="stat"><b>${td.n}</b><span class="sub">問</span></div><div class="stat"><b>${fmtMin(td.sec)}</b><span class="sub">取り組み時間</span></div><div class="stat"><b>${streakDays()}</b><span class="sub">連続日数</span></div></div>${td.n?`<div class="fb ok" style="margin-top:10px">今日も${td.n}問やった！えらい！</div>`:`<div class="sub" style="margin-top:8px">まずは1問から。やった分が全部力になる。</div>`}</div>`;
+ h+=peerCard();
+ h+=`<div class="card"><h3>🗺️ 領域の制覇マップ</h3><div class="sub">学内・全国どちらかの正答率が60%以上の問題のうち、取りこぼしを潰した割合（全体 ${all}%）</div>${bars(areas.map(x=>({n:x.a,p:x.pct,t:x.pct+'%'})),'g')}</div>`;
+ h+=`<div class="card"><h3>🚩 まずはここからスタート！（TOP5）</h3>${top5.length?top5.map((x,i)=>`<div class="line" onclick="startArea('${x.a}')" style="cursor:pointer"><div class="nm" style="width:auto;white-space:nowrap">${i+1}. ${esc(x.a)}</div><div class="bw sub" style="white-space:nowrap;text-align:right">のこり${x.rem}問・${x.pct}%</div><div class="pc" style="color:var(--pri)">▶</div></div>`).join(''):'<div class="sub">すべて制覇！すばらしい！</div>'}</div>`;
+ h+=`<div class="card"><h3>📈 伸びてきている領域</h3>${gr.length?gr.map(x=>`<div class="line"><div class="nm">${esc(x.a)}</div><div class="bw sub">直近 ${x.p}% （模試より +${x.d}pt）</div><div class="pc">🌱</div></div>`).join(''):'<div class="sub">問題を解くと、ここに伸びが表示されます。</div>'}</div>`;
+ h+=`<div class="card"><h3>🌟 自分の伸びしろ</h3>${weak.length?weak.map(x=>`<div class="line"><div class="nm">${esc(x.a)}</div><div class="bw sub">模試の正答率 ${x.pct}%（${x.c}/${x.n}問）</div></div>`).join('')+'<div class="sub" style="margin-top:6px">ここが伸びれば全体が一気に上がる！</div>':''}</div>`;
+ h+=`<div class="card"><h3>🧭 今の位置と次の一歩</h3><div>いま、頻出問題の制覇率は <b>${all}%</b>。</div><div style="margin-top:6px">次の一歩：${ms?`【${esc(ms.area)}】から${ms.list.length}問を制覇しよう。`:'チャレンジで応用力を磨こう。'}</div></div>`;
+ return h+'</div>'+nav('home');
+}
+
+function menuView(){
+ const f=ui.f,ar=AR();
+ const sel=(k,opts)=>`<select onchange="setF('${k}',this.value)">${opts.map(o=>`<option value="${esc(o[0])}" ${String(f[k])===String(o[0])?'selected':''}>${esc(o[1])}</option>`).join('')}</select>`;
+ let h=`<div class="hero" style="padding-bottom:24px"><h2>✏️ 問題をえらぶ</h2><div class="msg">領域・模試・実地問題から好きな問題に挑戦</div></div><div class="wrap" style="margin-top:12px">${toast()}`;
+ h+=`<div class="card"><h3>📚 領域をえらぶ</h3><div class="sub">優先度の高い順に出題（最大20問）</div><div class="grid3" style="margin-top:8px">${ar.map(a=>{const n=needList(q=>q.area===a).length;return `<button class="stat" style="border:0;font-family:inherit" onclick="startArea('${a}')"><b style="font-size:14px">${esc(a)}</b><span class="sub">${n?'のこり'+n+'問':'制覇済み'}</span></button>`}).join('')}</div></div>`;
+ h+=`<div class="card"><h3>🧩 くわしく選ぶ</h3>
+ <label>模試</label>${sel('exam',[['all','すべての模試'],...DATA.exams.map(e=>[e.id,e.name])])}
+ <label>午前／午後</label>${sel('ses',[['all','午前・午後'],['午前','午前'],['午後','午後']])}
+ <label>実地問題（1〜20番）だけ</label>${sel('prac',[[false,'すべての問題'],[true,'実地問題のみ']])}
+ <label>領域</label>${sel('area',[['all','すべての領域'],...ar.map(a=>[a,a])])}
+ <label>対象</label>${sel('only',[['need','間違えた問題だけ（優先度順）'],['all','全問']])}
+ <button class="btn" onclick="startFilter()">この条件で開始 ▶</button></div>`;
+ h+=`<div class="card"><h3>🔁 くり返し・チャレンジ</h3><button class="btn g s" onclick="startReview()">間違えた問題をくり返す（${needList().length}問）</button><button class="btn g s" onclick="startChallenge()">チャレンジ（類似問題）</button></div>`;
+ return h+'</div>'+nav('menu');
+}
+// selectの値は文字列で返るため prac を真偽値へ変換
+const _setF=setF;setF=function(k,v){if(k==='prac')v=(v==='true');_setF(k,v)};
+
+function analysisView(){
+ const ex=ui.ex,ar=AR();
+ const tot=mockAcc(ex);
+ const qs=DATA.qs.filter(q=>(ex==='all'||q.exam===ex)&&me.res[q.id]!==undefined);
+ const avg=qs.length?Math.round(qs.reduce((s,q)=>s+rate(q),0)/qs.length):null;
+ const miss=qs.filter(q=>me.res[q.id]===0&&rate(q)>=60).sort((a,b)=>rate(b)-rate(a));
+ const cnt=[3,2,1].map(t=>miss.filter(q=>tier(rate(q))===t).length);
+ let h=`<div class="hero" style="padding-bottom:24px"><h2>📊 模試分析</h2><div class="msg">${esc(me.name)}さんの模試の結果</div></div><div class="wrap" style="margin-top:12px">`;
+ h+=`<div class="seg">${[['all','全体'],...DATA.exams.map(e=>[e.id,e.name])].map(e=>`<button class="${ex===e[0]?'on':''}" onclick="ui.ex='${e[0]}';render()">${esc(e[1])}</button>`).join('')}</div>`;
+ h+=`<div class="card"><div class="grid3"><div class="stat"><b>${tot.pct===null?'-':tot.pct+'%'}</b><span class="sub">あなた</span></div><div class="stat"><b>${avg===null?'-':avg+'%'}</b><span class="sub">全体平均</span></div><div class="stat"><b>${tot.pct===null||avg===null?'-':(tot.pct-avg>=0?'+':'')+(tot.pct-avg)}</b><span class="sub">平均との差</span></div></div><div class="sub" style="margin-top:6px">${tot.c}/${tot.n}問正解</div></div>`;
+ h+=`<div class="card"><h3>分野別 正答率</h3><div class="sub">スマホで見やすい棒グラフ（青＝模試、橙＝アプリでの正答率）</div>`;
+ h+=ar.map(a=>{const m=mockAcc(ex,a),p=appAcc(a);if(!m.n)return '';return `<div style="margin-top:10px"><div style="display:flex;justify-content:space-between;font-size:13px;font-weight:600"><span>${esc(a)}</span><span>模試 ${m.pct}%${p.n?' ／ アプリ '+p.pct+'%':''}</span></div><div class="bar bl" style="margin-top:3px"><i style="width:${m.pct}%"></i></div>${p.n?`<div class="bar" style="margin-top:3px;height:6px"><i style="width:${p.pct}%"></i></div>`:''}</div>`}).join('');
+ h+='</div>';
+ h+=`<div class="card"><h3>🎯 取りこぼし（学内・全国どちらかの正答率60%以上で不正解）</h3><div class="grid3"><div class="stat">${tb(3)}<b>${cnt[0]}</b>問</div><div class="stat">${tb(2)}<b>${cnt[1]}</b>問</div><div class="stat">${tb(1)}<b>${cnt[2]}</b>問</div></div>`;
+ h+=miss.length?`<div style="margin-top:8px">${miss.map(q=>`<div class="line"><div class="nm" style="width:auto;flex:1">${esc(examName(q.exam))} ${esc(q.ses)}${q.no}<br><span class="sub">${esc(q.area)}</span></div><div class="pc" style="width:auto">${rate(q)}% ${tb(tier(rate(q)))}</div></div>`).join('')}</div>`:'<div class="fb ok" style="margin-top:10px">取りこぼしなし！すばらしい！</div>';
+h+='</div>';
+ const xs=Object.entries(me.ext||{});
+ xs.forEach(([xid,x])=>{const all=DATA.students.map(z=>(z.ext||{})[xid]).filter(Boolean);const av=all.length?Math.round(all.reduce((a,z)=>a+z.c/z.n,0)/all.length*100):null;const pc=Math.round(x.c/x.n*100);
+  h+=`<div class="card"><h3>📝 ${esc(x.name)}（問題データなし）</h3><div class="sub">問題文の登録がないため、分野ごとの正答率だけ表示します。</div><div class="grid3"><div class="stat"><b>${pc}%</b><span class="sub">あなた（${x.c}/${x.n}）</span></div><div class="stat"><b>${av===null?'-':av+'%'}</b><span class="sub">全体平均</span></div><div class="stat"><b>${av===null?'-':(pc-av>=0?'+':'')+(pc-av)}</b><span class="sub">平均との差</span></div></div>${Object.entries(x.areas).sort((a,b)=>a[1][0]/a[1][1]-b[1][0]/b[1][1]).map(([a,v])=>{const p=Math.round(v[0]/v[1]*100);const ar=all.filter(z=>z.areas[a]);const aa=ar.length?Math.round(ar.reduce((q,z)=>q+z.areas[a][0]/z.areas[a][1],0)/ar.length*100):null;return `<div style="margin-top:10px"><div style="display:flex;justify-content:space-between;font-size:13px;font-weight:600"><span>${esc(a)}</span><span>${p}%${aa===null?'':'（平均 '+aa+'%）'}</span></div><div class="bar"><i style="width:${p}%"></i></div></div>`}).join('')}</div>`});
+ return h+'</div>'+nav('analysis');
+}
+
+function recordsView(){
+ const tot=U.log.length,sec=U.log.reduce((s,x)=>s+x.sec,0),ok=U.log.filter(x=>x.ok).length;
+ const mastered=DATA.qs.filter(q=>(mockWrong(q)||stq(q).wrong>0)&&stq(q).streak>=2).length;
+ const d7=[];for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);d7.push({l:(d.getMonth()+1)+'/'+d.getDate(),n:(U.days[dstr(d)]||{n:0}).n})}
+ const mx=Math.max(5,...d7.map(x=>x.n));
+ return `<div class="hero" style="padding-bottom:24px"><h2>🌱 自分の頑張り</h2><div class="msg">やった分だけ、ちゃんと積み上がっています</div></div><div class="wrap" style="margin-top:12px"><div class="card"><div class="grid3"><div class="stat"><b>${tot}</b><span class="sub">解いた問題</span></div><div class="stat"><b>${fmtMin(sec)}</b><span class="sub">合計時間</span></div><div class="stat"><b>${mastered}</b><span class="sub">制覇した問題</span></div></div><div class="sub" style="margin-top:8px">正答率 ${tot?Math.round(ok/tot*100):0}%　／　1問あたり平均 ${tot?Math.round(sec/tot):0}秒　／　連続 ${streakDays()}日</div></div>
+ <div class="card"><h3>この1週間</h3><div class="days">${d7.map(x=>`<div><i style="height:${Math.round(x.n/mx*100)}%"></i>${x.n}<br>${x.l}</div>`).join('')}</div></div>
+ <div class="card"><h3>💬 いまの自分へのひとこと</h3><div style="font-size:16px;font-weight:600;line-height:1.8">${esc(hk)}</div><button class="btn g s" onclick="newHk()">別のひとこと</button></div>
+ <button class="btn g" onclick="logout()">ログアウト</button></div>`+nav('records');
+}
+
+/* ================= 先生用 ================= */
+function adminLoginView(){return `<div class="login"><h1>🔒 先生用</h1><div class="card"><label>パスワード</label><input id="pw" type="password"><button class="btn" onclick="adminLogin()">ひらく</button>${ui.msg?`<div class="fb ng">${esc(ui.msg)}</div>`:''}<button class="btn g" onclick="go('login')">戻る</button></div></div>`}
+let ADMINPW='';
+async function adminLogin(){const pw=$('#pw').value;
+ if(GAS_URL){try{const r=await gas({a:'checkAdmin',pw});if(r.ok){ADMINPW=pw;ui.admin=true;ui.msg=null;go('admin')}else{ui.msg='パスワードが違います';render()}}catch(e){ui.msg='サーバーに接続できません';render()}return}
+ if(pw===ADMIN_PW){ui.admin=true;ui.msg=null;go('admin')}else{ui.msg='パスワードが違います';render()}}
+function allStats(){return DATA.students.map(s=>{const u=store.get('kd_u_'+s.id,{q:{},log:[],days:{}});const l=u.log.filter(x=>!x.chal);const sec=u.log.reduce((a,x)=>a+x.sec,0);const dk=Object.keys(u.days).sort();return{s,u,n:u.log.length,ok:u.log.filter(x=>x.ok).length,sec,days:dk.length,last:dk[dk.length-1]||'-',mastered:Object.values(u.q).filter(x=>x.streak>=2).length}})}
+function adminView(){
+ const st=allStats();const qm=Object.fromEntries(DATA.qs.map(q=>[q.id,q]));
+ let h=`<div class="hero" style="padding-bottom:24px"><h2>🧑‍🏫 学習記録（先生用）</h2><div class="msg">学生ごとの取り組み量・時間</div></div><div class="wrap" style="margin-top:12px">${toast()}<div class="card"><table class="tbl"><tr><th>学生</th><th>問題数</th><th>正答率</th><th>合計</th><th>平均/問</th><th>最終</th></tr>${st.map(x=>`<tr class="cl" onclick="ui.sel='${x.s.id}';render()"><td>${esc(x.s.name)}<br><span class="sub">${esc(x.s.type||x.s.id)}</span></td><td>${x.n}</td><td>${x.n?Math.round(x.ok/x.n*100)+'%':'-'}</td><td>${fmtMin(x.sec)}</td><td>${x.n?Math.round(x.sec/x.n)+'秒':'-'}</td><td>${esc(x.last.slice(5))}</td></tr>`).join('')}</table></div>`;
+ if(ui.sel){const x=st.find(y=>y.s.id===ui.sel);if(x){const by={};x.u.log.forEach(l=>{const b=by[l.qid]||(by[l.qid]={n:0,ok:0,sec:0});b.n++;b.ok+=l.ok;b.sec+=l.sec});const rows=Object.entries(by).map(([id,b])=>({id,...b,avg:Math.round(b.sec/b.n)})).sort((a,b)=>b.avg-a.avg).slice(0,15);
+  h+=`<div class="card"><h3>${esc(x.s.name)}さん：問題ごとの時間（長い順）</h3><div class="sub">取り組んだ日数 ${x.days}日／制覇 ${x.mastered}問</div><table class="tbl"><tr><th>問題</th><th>領域</th><th>回数</th><th>正答</th><th>平均秒</th></tr>${rows.map(r=>{const q=qm[r.id];return `<tr><td>${q?esc(examName(q.exam))+' '+esc(q.ses)+q.no:esc(r.id)}</td><td>${q?esc(q.area):''}</td><td>${r.n}</td><td>${r.ok}/${r.n}</td><td>${r.avg}</td></tr>`}).join('')}</table></div>`}}
+ h+=cloudCard();
+ h+=`<div class="card"><h3>🪪 学籍番号の名簿</h3><div class="sub">「学籍番号 氏名」を1行ずつ貼り付け（タブ・スペース区切り可）。登録済み：${Object.keys(store.get('kd_roster',{})).length}名。成績CSVの学生名と自動で結びつけます。</div><textarea id="rt" rows="5" style="width:100%" placeholder="12345678 国試　太郎"></textarea><button class="btn" onclick="doRoster()">名簿を登録</button></div>`;
+ h+=`<div class="card"><h3>📥 模試の成績を取り込む</h3><div class="sub">問題バンク：${DATA.exams.map(e=>esc(e.name)+'（'+DATA.qs.filter(q=>q.exam===e.id).length+'問）').join('、')}。模試の成績CSV（学生ID・学生種別・問題1〜／CORRECT・CATEGORY・NATIONAL行つき）を選びます。</div><label>どの模試の成績？</label><select id="ix">${DATA.exams.map(e=>`<option value="${esc(e.id)}">${esc(e.name)}</option>`).join('')}<option value="__ext">（問題データなし）CSVの正解・分野だけで集計</option></select><label>問題データなしの場合の模試名</label><input id="exn" placeholder="例：10/28模試"><label>成績CSV（ファイルを選ぶ）</label><input type="file" id="cf" accept=".csv,.txt,text/csv,text/plain,*/*" onchange="pickCsv(this)"><div class="sub" id="cfn">${CSVNAME?'選択中：'+esc(CSVNAME):''}</div><label>または、CSVの中身をここに貼り付け</label><textarea id="ct" rows="3" style="width:100%" placeholder="学生ID,学生種別,問題1,…"></textarea><button class="btn" onclick="doImport()">取り込む</button><div class="sub" style="margin-top:8px">登録済みの学生：${DATA.students.length}名</div>${BANK?'<button class="btn g s" onclick="clearStudents()">学生データを消去</button>':'<div class="sub">※ 現在はデモ用データです（問題バンクが見つかりません）。</div>'}</div>`;
+ h+=`<div class="card"><h3>📤 記録の書き出し（CSV）</h3><button class="btn g s" onclick="exportLog()">CSVを表示</button><textarea id="out" readonly style="display:none"></textarea></div><button class="btn g" onclick="logout()">終了</button></div>`;
+ return h;
+}
+function exportLog(){const rows=['学籍番号,氏名,問題ID,正誤,秒,モード,チャレンジ,日時'];DATA.students.forEach(s=>{(store.get('kd_u_'+s.id,{log:[]}).log).forEach(l=>rows.push([s.id,s.name,l.qid,l.ok,l.sec,l.mode,l.chal,new Date(l.ts).toLocaleString('ja-JP')].join(',')))});const o=$('#out');o.style.display='block';o.value=rows.join('\n');o.select()}
+
+/* ================= 学習支援（計画・先生にアポ・カンバン） ================= */
+const TEACHERS=[
+{name:'旭 竜馬',email:'rasahi@tiu.ac.jp',bld:'研究棟',room:'R508',areas:[]},
+{name:'生田 太',email:'fikuta@tiu.ac.jp',bld:'図書館棟',room:'L401',areas:[]},
+{name:'猪股 高志',email:'tinomata@tiu.ac.jp',bld:'研究棟',room:'R403',areas:[]},
+{name:'内尾 優',email:'yuchio@tiu.ac.jp',bld:'研究棟',room:'R209',areas:[]},
+{name:'小川 哲郎',email:'teogawa@tiu.ac.jp',bld:'図書館棟',room:'L409',areas:[]},
+{name:'金﨑 雅史',email:'mkaneza@tiu.ac.jp',bld:'研究棟',room:'R203',areas:[]},
+{name:'川崎 翼',email:'tkawasa@tiu.ac.jp',bld:'管理棟',room:'A320',areas:[]},
+{name:'窪田 智史',email:'skubota@tiu.ac.jp',bld:'研究棟',room:'R201',areas:[]},
+{name:'神戸 晃男',email:'akobe@tiu.ac.jp',bld:'図書館棟',room:'L408',areas:[]},
+{name:'酒井 美園',email:'msakai@tiu.ac.jp',bld:'研究棟',room:'R401',areas:[]},
+{name:'志村 圭太',email:'kshimura@tiu.ac.jp',bld:'管理棟',room:'A309',areas:[]},
+{name:'杉本 諭',email:'ssugimo@tiu.ac.jp',bld:'1号館',room:'712',areas:[]},
+{name:'武田 要',email:'ktakeda@tiu.ac.jp',bld:'研究棟',room:'R305',areas:[]},
+{name:'戸島 美智生',email:'mtojima@tiu.ac.jp',bld:'図書館棟',room:'L406',areas:[]},
+{name:'二宮 省悟',email:'sninomi@tiu.ac.jp',bld:'図書館棟',room:'L405',areas:[]},
+{name:'一寸木 洋平',email:'ymasugi@tiu.ac.jp',bld:'研究棟',room:'R311',areas:[]},
+{name:'山本 大誠',email:'tayamamo@tiu.ac.jp',bld:'研究棟',room:'R210',areas:[]}
+]; // areas:[] に担当領域（例 ['神経系','運動器']）を入れると、領域選択で自動的に絞り込まれます
+const DOW=['日','月','火','水','木','金','土'];
+const HITOKOTO=['「わかったつもり」が、本番でいちばん点を落とす。もう一回、解いてみよう。','合格する人も、最初は同じところで間違えている。違いは、そのあと何回やったか。','間違えた問題は、あと一歩で取れる点数。ここを潰せば、まだまだ伸びる。','今日できなくても大丈夫。昨日の自分より、1問だけ前へ。','疲れたら休んでいい。でも明日の自分のために、5問だけ。','国試までの日数は、もう増えない。だから今日の1問が効いてくる。','全部を完璧にしなくていい。みんなが取る問題を、確実に取ろう。','解説を読んだだけで満足していないかな？自分の言葉で説明してみよう。','苦手な領域は、伸びしろの大きい領域。ここが変われば全体が変わる。','続けている人が、最後に強い。今日ここに来たこと自体が前進。','間違いに気づけた今が、いちばんのチャンス。','少しずつでも、積んだ分は裏切らない。まだまだ、ここから。','焦るのは本気の証拠。焦ったら、得意な領域で1問解いて落ち着こう。','「あとでやろう」は明日の自分への宿題。10分だけ、今やろう。','先生に聞くのも立派な勉強法。わからないを放っておかないで。','時間をあけて解き直すほど、記憶は強くなる。同じ問題をもう一度。','比べるのは他の人じゃない。1週間前の自分。','わかっている問題ほど、時間を計って解くと穴が見つかる。','今日の自分に満点はいらない。でも、ゼロにはしないでおこう。','ここまで積み上げてきた自分を、もう少しだけ信じてあげよう。'];
+let hk=rnd(HITOKOTO);
+function newHk(){let n;do{n=rnd(HITOKOTO)}while(n===hk);hk=n;render()}
+function initU(){
+ U.plan=U.plan||{goal:50};U.plan.goal=U.plan.goal||50;U.sched=U.sched||defaultSched();U.focus=U.focus||{};
+ U.tasks=U.tasks||[];U.appts=U.appts||[];hk=rnd(HITOKOTO);ui.sd=null;ui.sg=null;
+}
+/* ---- 1日スケジュール（15分単位） ---- */
+const SEG=[{n:'午前',a:24,b:48},{n:'午後',a:48,b:68},{n:'夕方',a:68,b:80},{n:'夜',a:80,b:96}];
+const hhmm=i=>pad(Math.floor(i/4))+':'+pad((i%4)*15);
+const toIdx=(t,up)=>{const [h,m]=t.split(':').map(Number);return h*4+(up?Math.ceil(m/15):Math.floor(m/15))};
+const dowOf=ds=>new Date(ds+'T00:00:00').getDay();
+function defaultSched(){const w=[80,81,82];return{study:{0:[40,41],1:[...w],2:[...w],3:[...w],4:[...w],5:[...w],6:[40,41,42,43,56,57]},classes:[],specials:[]}}
+function resetSched(){const old=U.sched;U.sched={...defaultSched(),classes:old.classes,specials:old.specials};saveU();ui.msg='おすすめの勉強スケジュールにもどしました';render()}
+function segNow(){const h=new Date().getHours();return h<12?0:h<17?1:h<20?2:3}
+function weekDays(){const d=new Date();d.setDate(d.getDate()-((d.getDay()+6)%7));return [...Array(7)].map((_,i)=>{const x=new Date(d);x.setDate(d.getDate()+i);return x})}
+const studyMin=ds=>Math.max(Math.round(((U.days[ds]||{}).sec||0)/60),U.focus[ds]||0);
+const weekN=()=>weekDays().reduce((s,d)=>s+(U.days[dstr(d)]||{n:0}).n,0);
+function setGoal(v){U.plan.goal=+v;saveU();render()}
+function dayInfo(ds,i){const dow=dowOf(ds);const c=U.sched.classes.find(x=>x.dow===dow&&i>=x.s&&i<x.e);if(c)return{t:'class',title:c.title};const sp=U.sched.specials.find(x=>x.date===ds&&i>=x.s&&i<x.e);if(sp)return{t:'sp',title:sp.title};return (U.sched.study[dowOf(ds)]||[]).includes(i)?{t:'study'}:{t:'free'}}
+function toggleCell(ds,i){const dow=dowOf(ds);const inf=dayInfo(ds,i);if(inf.t==='class'||inf.t==='sp'){ui.msg=inf.title+'（授業・予定の時間）';render();return}ui.msg=null;const a=U.sched.study[dow]||(U.sched.study[dow]=[]);const k=a.indexOf(i);if(k>=0)a.splice(k,1);else a.push(i);saveU();render()}
+function sessionsOf(ds){const a=(U.sched.study[dowOf(ds)]||[]).filter(i=>dayInfo(ds,i).t==='study').sort((x,y)=>x-y);const out=[];a.forEach(i=>{const l=out[out.length-1];if(l&&l.e===i)l.e=i+1;else out.push({s:i,e:i+1})});return out}
+function weekPlan(){const ar=AR().map(a=>({a,...areaStat(a)})).filter(x=>x.rem>0).sort((x,y)=>y.w-x.w).slice(0,5);let k=0;return weekDays().map(d=>{const ds=dstr(d);return{d,ds,sess:sessionsOf(ds).map(s=>{const x=ar.length?ar[k++%ar.length]:null;return{...s,area:x?x.a:null,rem:x?x.rem:0}})}})}
+function sessHtml(s){return `<div class="line"><div class="bw" style="font-size:14px"><b>${hhmm(s.s)}〜${hhmm(s.e)}</b>（${(s.e-s.s)*15}分）<br>${s.area?'【'+esc(s.area)+'】のこり'+s.rem+'問':'チャレンジ問題'}</div><div class="row" style="flex:none;width:130px"><button class="chip" style="border:0;background:var(--blue);color:#fff;margin:0" onclick="startTimer(15)">⏱15分</button>${s.area?`<button class="chip" style="border:0;background:var(--pri);color:#fff;margin:0" onclick="startArea('${s.area}')">▶問題</button>`:''}</div></div>`}
+function timerCard(){return `<div class="card"><h3>⏱ 15分集中タイマー</h3><div class="sub">「ピッ」で開始、終わりの時間に「ピピピッ」。その間は、この15分だけに集中！</div><div class="row"><button class="btn b s" onclick="startTimer(15)">15分</button><button class="btn b s" onclick="startTimer(30)">30分</button></div><div class="sub" style="margin-top:6px">音が出ないときは端末のマナーモードを確認。画面を閉じると終了音が鳴らないことがあります。</div></div>`}
+function todayCard(){const ds=today();const wp=weekPlan().find(x=>x.ds===ds);const ss=wp?wp.sess:[];const cl=[...U.sched.classes.filter(x=>x.dow===dowOf(ds)),...U.sched.specials.filter(x=>x.date===ds)].sort((a,b)=>a.s-b.s);
+ return `<div class="card"><h3>🗓️ 今日の予定</h3>${cl.length?cl.map(c=>`<div class="sub">${c.date?'⭐':'🏫'} ${hhmm(c.s)}〜${hhmm(c.e)} ${esc(c.title)}</div>`).join(''):''}${ss.length?ss.map(sessHtml).join(''):'<div class="sub" style="margin-top:6px">今日の勉強枠はお休み。気が向いたら15分だけやってみよう。</div>'}<div class="row"><button class="btn b s" onclick="startTimer(15)">⏱ 15分集中スタート</button><button class="btn g s" onclick="go('plan')">時間割を見る</button></div></div>`}
+
+/* ---- タイマー（ピッ！） ---- */
+let TM=null,AC=null;
+function beep(n,f){try{const C=window.AudioContext||window.webkitAudioContext;if(!C)return;AC=AC||new C();if(AC.state==='suspended')AC.resume();for(let i=0;i<n;i++){const o=AC.createOscillator(),g=AC.createGain();o.type='sine';o.frequency.value=f;o.connect(g);g.connect(AC.destination);const t=AC.currentTime+i*.25;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.5,t+.02);g.gain.exponentialRampToValueAtTime(.0001,t+.18);o.start(t);o.stop(t+.2)}}catch(e){}}
+function startTimer(min){beep(1,1046);TM={start:Date.now(),end:Date.now()+min*60000,min};const b=$('#tbar');b.style.display='flex';b.innerHTML=`<span>⏱ 集中</span><b id="tl" style="font-size:18px"></b><div class="p"><i id="tp"></i></div><button onclick="finishTimer(false)">やめる</button>`;document.body.classList.add('tm');tick()}
+function tick(){if(!TM)return;const rem=TM.end-Date.now();if(rem<=0){finishTimer(true);return}const l=$('#tl'),p=$('#tp');if(l)l.textContent=pad(Math.floor(rem/60000))+':'+pad(Math.floor(rem%60000/1000));if(p)p.style.width=Math.round((1-rem/(TM.min*60000))*100)+'%'}
+function finishTimer(done){if(!TM)return;const t=TM;TM=null;const mins=done?t.min:Math.floor((Date.now()-t.start)/60000);if(me&&mins>0){U.focus[today()]=(U.focus[today()]||0)+mins;saveU()}const b=$('#tbar');if(done){beep(3,784);try{navigator.vibrate&&navigator.vibrate([200,100,200])}catch(e){}b.innerHTML=`<span style="flex:1">✅ ${t.min}分おつかれさま！よく集中できました</span><button onclick="hideBar()">OK</button>`}else hideBar();if(me)render()}
+function hideBar(){$('#tbar').style.display='none';document.body.classList.remove('tm')}
+setInterval(tick,250);
+
+/* ---- みんなの進捗（名前なし） ---- */
+function mulberry(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function peerMins(k){if(PEER&&PEER.length>=5){const wd=weekDays().map(dstr),t=today();return PEER.map(m=>k==='d'?(m[t]||0):wd.reduce((a,d)=>a+(m[d]||0),0))}const ds=dstr(k==='w'?weekDays()[0]:new Date());let seed=0;for(const c of ds+k)seed=(seed*31+c.charCodeAt(0))|0;const r=mulberry(seed);const out=[];for(let i=0;i<47;i++){const x=r();out.push(k==='d'?(x<.22?0:x<.42?Math.floor(r()*30):x<.7?30+Math.floor(r()*30):x<.9?60+Math.floor(r()*30):90+Math.floor(r()*60)):(x<.1?0:Math.floor(r()*r()*420)+(x>.6?30:0)))}return out}
+function peerCard(){
+ const k=ui.pk||'d';const edges=k==='d'?[0,1,15,30,45,60]:[0,1,60,120,180,240];
+ const labs=k==='d'?['0','1〜14','15〜29','30〜44','45〜59','60〜']:['0','1〜59','60〜119','120〜179','180〜239','240〜'];
+ const bin=m=>{let b=0;edges.forEach((e,i)=>{if(m>=e)b=i});return b};
+ const others=peerMins(k);const own=k==='d'?studyMin(today()):weekDays().reduce((s,d)=>s+studyMin(dstr(d)),0);
+ const cnt=[0,0,0,0,0,0];others.forEach(m=>cnt[bin(m)]++);cnt[bin(own)]++;
+ const total=others.length+1,mx=Math.max(...cnt),thr=k==='d'?30:150,ok=others.filter(m=>m>=thr).length+(own>=thr?1:0),ob=bin(own);
+ return `<div class="card"><h3>👥 みんなの勉強時間</h3><div class="seg"><button class="${k==='d'?'on':''}" onclick="ui.pk='d';render()">今日</button><button class="${k==='w'?'on':''}" onclick="ui.pk='w';render()">今週</button></div>
+ <div style="font-weight:700">${k==='d'?'30分':'150分'}以上勉強した人：${ok}人（${Math.round(ok/total*100)}%）</div>
+ <div style="display:flex;gap:4px;align-items:flex-end;margin-top:8px">${cnt.map((c,i)=>`<div style="flex:1;text-align:center;font-size:11px"><div style="height:84px;display:flex;flex-direction:column;justify-content:flex-end;align-items:center">${i===ob?'<div style="color:var(--blue);font-weight:700">▼あなた</div>':''}<div style="width:70%;height:${c?Math.round(c/mx*56)+4:0}px;background:${i===ob?'var(--blue)':'#c9d3ea'};border-radius:6px 6px 0 0"></div></div><b>${c}</b>人<br><span class="sub">${labs[i]}分</span></div>`).join('')}</div>
+ <div style="margin-top:8px">あなたは${k==='d'?'今日':'今週'} <b>${own}分</b>。${own>=thr?'いいペース！この調子！':'あと'+(thr-own)+'分で'+(k==='d'?'30分':'今週の目安')+'に届くよ。'}</div>
+ <div class="sub" style="margin-top:6px">※ 名前は出ません。${PEER&&PEER.length>=5?'クラウドに集まった仲間の記録（'+PEER.length+'人）です。':'いまは見本のデモ表示です（5人以上の記録が集まると本物の分布になります）。'}</div></div>`;
+}
+
+/* ---- 計画画面 ---- */
+const cf=()=>ui.cf||(ui.cf={k:'w',title:'',dow:1,date:'',s:'09:00',e:'10:30'});
+function gridHtml(ds,sg){let h='';for(let hr=sg.a/4;hr<sg.b/4;hr++){h+=`<div class="hr"><span>${pad(hr)}:00</span>`;for(let q=0;q<4;q++){const i=hr*4+q,inf=dayInfo(ds,i);h+=`<button class="cell ${inf.t}" onclick="toggleCell('${ds}',${i})">${inf.t==='class'?'🏫':inf.t==='sp'?'⭐':':'+pad(q*15)}</button>`}h+='</div>'}return h}
+function schTab(){
+ const wp=weekPlan(),ds=ui.sd&&wp.some(x=>x.ds===ui.sd)?ui.sd:today(),sgI=ui.sg===null||ui.sg===undefined?segNow():ui.sg;
+ const wk=weekN(),g=U.plan.goal,tot=i=>(U.sched.study[dowOf(ds)]||[]).filter(x=>x>=SEG[i].a&&x<SEG[i].b&&dayInfo(ds,x).t==='study').length*15;
+ const day=wp.find(x=>x.ds===ds);const cl=[...U.sched.classes.filter(x=>x.dow===dowOf(ds)),...U.sched.specials.filter(x=>x.date===ds)].sort((a,b)=>a.s-b.s);
+ let h=timerCard();
+ h+=`<div class="card"><h3>🎯 今週の目標</h3><div style="font-size:18px;font-weight:700">${wk} <span class="sub">/ ${g}問</span></div><div class="bar" style="margin-top:6px"><i style="width:${Math.min(100,Math.round(wk/g*100))}%"></i></div><select onchange="setGoal(this.value)">${[20,30,50,70,100,150].map(n=>`<option ${n===g?'selected':''} value="${n}">週の目標：${n}問</option>`).join('')}</select></div>`;
+ h+=`<div class="card"><h3>🗓️ 1日のスケジュール（15分単位）</h3><div class="sub">オレンジ＝勉強、青＝授業、紫＝特別講義。空きマスをタップで勉強枠に追加／もう一度で解除。</div>
+ <div class="seg" style="overflow-x:auto">${wp.map(x=>`<button class="${x.ds===ds?'on':''}" onclick="ui.sd='${x.ds}';render()">${DOW[x.d.getDay()]}<br>${x.d.getDate()}</button>`).join('')}</div>
+ <div class="seg">${SEG.map((s,i)=>`<button class="${i===sgI?'on':''}" onclick="ui.sg=${i};render()">${s.n}<br><span style="font-weight:400;font-size:11px">${tot(i)?tot(i)+'分':'—'}</span></button>`).join('')}</div>
+ ${cl.length?cl.map(c=>`<div class="sub">${c.date?'⭐':'🏫'} ${hhmm(c.s)}〜${hhmm(c.e)} ${esc(c.title)}</div>`).join(''):''}
+ <div style="margin-top:8px">${gridHtml(ds,SEG[sgI])}</div>
+ <h3 style="margin-top:10px">⭐ この日のおすすめ（伸びしろの大きい領域）</h3>${day&&day.sess.length?day.sess.map(sessHtml).join(''):'<div class="sub">この日は勉強枠がありません。マスをタップして追加しよう。</div>'}
+ <button class="btn g s" onclick="resetSched()">おすすめの勉強スケジュールにもどす</button></div>`;
+ return h;
+}
+function addClass(){const f=cf();if(!f.title.trim()){ui.msg='名前を入力してください';render();return}const s=toIdx(f.s),e=toIdx(f.e,true);if(e<=s){ui.msg='終了は開始より後にしてください';render();return}
+ if(f.k==='w')U.sched.classes.push({id:Date.now(),dow:+f.dow,s,e,title:f.title.trim()});else{if(!f.date){ui.msg='日付を選んでください';render();return}U.sched.specials.push({id:Date.now(),date:f.date,s,e,title:f.title.trim()})}
+ f.title='';saveU();ui.msg='登録しました';render()}
+function delClass(k,id){if(k==='w')U.sched.classes=U.sched.classes.filter(x=>x.id!==id);else U.sched.specials=U.sched.specials.filter(x=>x.id!==id);saveU();render()}
+function clsTab(){
+ const f=cf();
+ let h=`<div class="card"><h3>🏫 授業・特別講義を登録</h3><div class="sub">登録した時間は勉強枠から外れ、スケジュールに表示されます。</div>
+ <label>種類</label><select onchange="cf().k=this.value;render()"><option value="w" ${f.k==='w'?'selected':''}>毎週の授業</option><option value="s" ${f.k==='s'?'selected':''}>特別講義・単発の予定</option></select>
+ <label>名前</label><input value="${esc(f.title)}" oninput="cf().title=this.value" placeholder="例）運動療法学／〇〇先生の特別講義">
+ ${f.k==='w'?`<label>曜日</label><select onchange="cf().dow=+this.value">${[1,2,3,4,5,6,0].map(d=>`<option value="${d}" ${+f.dow===d?'selected':''}>${DOW[d]}曜</option>`).join('')}</select>`:`<label>日付</label><input type="date" value="${f.date}" oninput="cf().date=this.value">`}
+ <div class="row"><div><label>開始</label><input type="time" step="900" value="${f.s}" oninput="cf().s=this.value"></div><div><label>終了</label><input type="time" step="900" value="${f.e}" oninput="cf().e=this.value"></div></div>
+ <button class="btn" onclick="addClass()">登録する</button></div>`;
+ const cs=[...U.sched.classes].sort((a,b)=>((a.dow+6)%7)-((b.dow+6)%7)||a.s-b.s),sp=[...U.sched.specials].sort((a,b)=>a.date.localeCompare(b.date)||a.s-b.s);
+ h+=`<div class="card"><h3>毎週の授業</h3>${cs.length?cs.map(c=>`<div class="line"><div class="bw" style="font-size:14px">${DOW[c.dow]}曜 ${hhmm(c.s)}〜${hhmm(c.e)}<br><b>${esc(c.title)}</b></div><button class="chip" style="border:0" onclick="delClass('w',${c.id})">削除</button></div>`).join(''):'<div class="sub">まだ登録がありません</div>'}</div>`;
+ h+=`<div class="card"><h3>特別講義・単発の予定</h3>${sp.length?sp.map(c=>`<div class="line"><div class="bw" style="font-size:14px">${c.date.slice(5).replace('-','/')} ${hhmm(c.s)}〜${hhmm(c.e)}<br><b>${esc(c.title)}</b></div><button class="chip" style="border:0" onclick="delClass('s',${c.id})">削除</button></div>`).join(''):'<div class="sub">まだ登録がありません</div>'}</div>`;
+ return h;
+}
+
+/* ---- 先生にアポ ---- */
+const ap=()=>ui.ap||(ui.ap={area:'',t:'',text:'',d1:'',d2:'',d3:''});
+const teachersFor=area=>{const m=TEACHERS.filter(t=>(t.areas||[]).includes(area));return m.length?{list:m,mapped:true}:{list:TEACHERS,mapped:false}};
+function setApArea(v){const a=ap();a.area=v;const r=teachersFor(v);a.t=r.mapped?r.list[0].email:'';render()}
+function apptQ(){const q=curQ(),b=q._base||q;ui.ap={area:b.area,t:'',text:`${examName(b.exam)} ${b.ses}${b.no}「${q.q}」について、`,d1:'',d2:'',d3:''};const r=teachersFor(b.area);if(r.mapped)ui.ap.t=r.list[0].email;ui.pt='apt';ui.screen='plan';render();window.scrollTo(0,0)}
+function makeAppt(){
+ const a=ap(),t=TEACHERS.find(x=>x.email===a.t);if(!a.area||!t){ui.msg=!a.area?'まず領域をえらんでください':'先生をえらんでください';render();return}
+ const st=areaStat(a.area);
+ const hope=[a.d1,a.d2,a.d3].filter(Boolean).map((d,i)=>`第${i+1}希望：${d.replace('T',' ')}`).join('\n')||'（ご都合の良い日時をご教示ください）';
+ const subject=`【質問アポのお願い】${me.sid||''} ${me.name}（${a.area}）`.replace('】 ','】');
+ const body=`${t.name}先生\n\nお世話になっております。国試対策に取り組んでいる${me.name}${me.sid?'（学籍番号'+me.sid+'）':''}です。\n質問したいことがあり、お時間をいただけないでしょうか。\n\n【領域】${a.area}\n【質問内容】${a.text||'（ここに質問を書く）'}\n【取り組み状況】これまで${U.log.length}問に取り組み、${a.area}の制覇率は${st.pct}%です。\n【希望日時】\n${hope}\n\nお忙しいところ恐縮ですが、よろしくお願いいたします。\n${me.name}`;
+ U.appts.unshift({ts:Date.now(),to:t.name,area:a.area,subject,s:0});saveU();ui.mail={to:t.email,subject,body};render();setTimeout(()=>{const e=$('#mail');if(e)e.scrollIntoView()},50);
+}
+function copyMail(){const m=ui.mail;const t=$('#mt');t.select();try{navigator.clipboard.writeText('件名：'+m.subject+'\n\n'+m.body).then(()=>{ui.msg='コピーしました';render()},()=>{})}catch(e){}}
+function cycAppt(i){U.appts[i].s=(U.appts[i].s+1)%3;saveU();render()}
+const APST=['メール作成','日程確定','相談ずみ'];
+function aptTab(){
+ const a=ap(),r=a.area?teachersFor(a.area):null,t=TEACHERS.find(x=>x.email===a.t);
+ let h=`<div class="card"><h3>👩‍🏫 先生にアポ（質問・相談）</h3><div class="sub">①領域をえらぶ → ②先生をえらぶ → ③メール文を作る</div>
+ <label>① 質問したい領域</label><select onchange="setApArea(this.value)"><option value="">（領域をえらぶ）</option>${AR().map(x=>`<option ${a.area===x?'selected':''}>${esc(x)}</option>`).join('')}</select>`;
+ if(a.area){h+=`<label>② 先生</label><select onchange="ap().t=this.value;render()"><option value="">（先生をえらぶ）</option>${r.list.map(x=>`<option value="${esc(x.email)}" ${a.t===x.email?'selected':''}>${esc(x.name)}（${esc(x.bld)} ${esc(x.room)}）</option>`).join('')}</select>${r.mapped?'':'<div class="sub">この領域の担当教員は今後登録されます。いまは全教員から選べます。</div>'}${t?`<div class="box">宛先：${esc(t.email)}<br>研究室：${esc(t.bld)} ${esc(t.room)}</div>`:''}`}
+ h+=`<label>③ 質問したいこと</label><textarea oninput="ap().text=this.value" placeholder="例）〇〇の選択肢4がなぜ誤りなのか、理由がわかりません">${esc(a.text)}</textarea>
+ <label>希望日時（第1〜第3）</label><input type="datetime-local" value="${a.d1}" oninput="ap().d1=this.value"><input type="datetime-local" value="${a.d2}" oninput="ap().d2=this.value"><input type="datetime-local" value="${a.d3}" oninput="ap().d3=this.value">
+ <button class="btn" onclick="makeAppt()">✉️ メール文を作る</button>`;
+ if(ui.mail){const m=ui.mail;h+=`<div class="box" id="mail"><h4>できあがり（送信前に内容を確認）</h4><div class="sub">宛先：${esc(m.to)}</div><textarea id="mt" style="min-height:200px">${esc('件名：'+m.subject+'\n\n'+m.body)}</textarea><div class="row"><button class="btn b s" onclick="copyMail()">📋 コピー</button><a class="btn g s" style="text-decoration:none;text-align:center" href="mailto:${esc(m.to)}?subject=${encodeURIComponent(m.subject)}&body=${encodeURIComponent(m.body)}">メールアプリで開く</a></div><div class="sub">メールアプリが開かない場合は、コピーして大学のメールから送ってください。</div></div>`}
+ h+='</div>';
+ if(U.appts.length)h+=`<div class="card"><h3>これまでのアポ</h3>${U.appts.slice(0,5).map((x,i)=>`<div class="line"><div class="bw" style="font-size:13px">${esc(x.to)}先生／${esc(x.area||'')}<br><span class="sub">${new Date(x.ts).toLocaleDateString('ja-JP')}</span></div><button class="chip" style="border:0" onclick="cycAppt(${i})">${APST[x.s]} ⟳</button></div>`).join('')}</div>`;
+ return h;
+}
+function planView(){
+ const tabs=[['sch','🗓️ 時間割'],['cls','🏫 授業・予定'],['apt','👩‍🏫 先生にアポ']];ui.pt=ui.pt||'sch';
+ return `<div class="hero" style="padding-bottom:24px"><h2>🗓️ 学習計画</h2><div class="msg">15分ずつ集中して、自分のペースで進めよう</div></div><div class="wrap" style="margin-top:12px">${toast()}<div class="seg">${tabs.map(t=>`<button class="${ui.pt===t[0]?'on':''}" onclick="ui.pt='${t[0]}';ui.msg=null;render()">${t[1]}</button>`).join('')}</div>${ui.pt==='cls'?clsTab():ui.pt==='apt'?aptTab():schTab()}</div>`+nav('plan');
+}
+
+function addTask(){const v=$('#nt').value.trim();if(!v)return;U.tasks.push({id:Date.now(),t:v,s:0});saveU();render()}
+function moveTask(id,d){const t=U.tasks.find(x=>x.id===id);t.s=Math.max(0,Math.min(2,t.s+d));saveU();render()}
+function delTask(id){U.tasks=U.tasks.filter(x=>x.id!==id);saveU();render()}
+function boardView(){
+ const cols=[{},{},{}];
+ DATA.qs.forEach(q=>{const s=stq(q);if(!(mockWrong(q)||s.wrong>0))return;const c=cols[s.streak>=2?2:(s.tries>0?1:0)];const o=c[q.area]||(c[q.area]={n:0,t:0});o.n++;o.t=Math.max(o.t,tier(rate(q)))});
+ const heads=['📋 これから','🔥 取り組み中','🏆 制覇'];
+ const hints=['まだ手をつけていない間違い','解いたけど、まだ2回連続正解していない','2回連続で正解できた！'];
+ const colHtml=i=>{const auto=Object.entries(cols[i]).sort((a,b)=>b[1].t-a[1].t||b[1].n-a[1].n);const mine=U.tasks.filter(t=>t.s===i);const n=auto.reduce((s,x)=>s+x[1].n,0);
+  return `<div class="kcol"><h4><span>${heads[i]}</span><span>${n}問</span></h4><div class="sub" style="margin:-4px 4px 8px">${hints[i]}</div>`+
+  mine.map(t=>`<div class="kc me">✍️ ${esc(t.t)}<div class="row" style="margin-top:6px">${i>0?`<button class="chip" style="border:0" onclick="moveTask(${t.id},-1)">◀</button>`:''}${i<2?`<button class="chip" style="border:0" onclick="moveTask(${t.id},1)">▶</button>`:''}<button class="chip" style="border:0" onclick="delTask(${t.id})">✕</button></div></div>`).join('')+
+  auto.map(([a,o])=>`<div class="kc" ${i<2?`onclick="startArea('${a}')" style="cursor:pointer"`:''}><b>${esc(a)}</b>　${o.n}問 ${i<2?tb(o.t):''}</div>`).join('')+(auto.length||mine.length?'':'<div class="sub" style="padding:8px">まだありません</div>')+'</div>'};
+ const qm=Object.fromEntries(DATA.qs.map(q=>[q.id,q]));const byDay={};U.log.forEach(l=>{const d=dstr(new Date(l.ts));const o=byDay[d]||(byDay[d]={n:0,sec:0,a:{}});o.n++;o.sec+=l.sec;const q=qm[l.qid];if(q)o.a[q.area]=1});
+ const days=Object.keys(byDay).sort().reverse().slice(0,7);
+ let h=`<div class="hero" style="padding-bottom:24px"><h2>🗂️ 課題ボード</h2><div class="msg">課題の進み具合とやったことが、ひと目でわかる</div></div><div class="wrap" style="margin-top:12px">${toast()}<div class="sub" style="margin:0 4px">横にスワイプして3つの列を見てね。カードをタップすると、その領域の問題が始まります。</div><div class="kb">${[0,1,2].map(colHtml).join('')}</div>`;
+ h+=`<div class="card"><h3>✍️ 自分の課題カードを追加</h3><div class="row"><input id="nt" placeholder="例）神経系の解説を読み直す" style="margin:0"><button class="btn s" style="margin:0;flex:none;width:90px" onclick="addTask()">追加</button></div></div>`;
+ h+=`<div class="card"><h3>📝 やったこと</h3>${days.length?days.map(d=>`<div class="line"><div class="nm" style="width:56px">${d.slice(5).replace('-','/')}</div><div class="bw" style="font-size:13px">${byDay[d].n}問・${fmtMin(byDay[d].sec)}<br><span class="sub">${Object.keys(byDay[d].a).map(esc).join('、')}</span></div></div>`).join(''):'<div class="sub">まだ記録がありません。最初の1問から！</div>'}<button class="btn g s" onclick="go('records')">🌱 頑張りの記録を見る</button></div>`;
+ return h+'</div>'+nav('board');
+}
+
+/* ================= 問題バンク・学生データの読み込み ================= */
+let BANK=false;
+async function loadBank(){
+ try{
+  const m=await (await fetch('data/manifest.json')).json();const qs=[],ex=[];
+  for(const e of m.exams){const d=await (await fetch(e.file)).json();ex.push(d.exam);qs.push(...d.questions)}
+  if(!qs.length)throw 0;
+  DATA={exams:ex,qs,students:[]};AREA_ORDER=[];BANK=true;
+ }catch(e){BANK=false}
+ loadStudents();render();cloudInit();
+}
+function loadStudents(){if(BANK){DATA.students=store.get('kd_students',[]);applyRoster()}}
+function saveStudents(){store.set('kd_students',DATA.students)}
+function parseCsv(t){const rows=[];let r=[],c='',q=false;for(let i=0;i<t.length;i++){const ch=t[i];if(q){if(ch==='"'){if(t[i+1]==='"'){c+='"';i++}else q=false}else c+=ch}else if(ch==='"')q=true;else if(ch===','){r.push(c);c=''}else if(ch==='\n'||ch==='\r'){if(ch==='\r'&&t[i+1]==='\n')i++;r.push(c);c='';if(r.some(x=>x!==''))rows.push(r);r=[]}else c+=ch}
+ r.push(c);if(r.some(x=>x!==''))rows.push(r);return rows}
+function importVendor(text,examId,extName){
+ const rows=parseCsv(text.replace(/^﻿/,''));let n=0,m=0;
+ if(examId==='__ext'){
+  const xn=(extName||'').trim(),xid='x'+norm(xn);const cr=rows.find(r=>(r[0]||'').trim()==='CORRECT')||[],cat=rows.find(r=>(r[0]||'').trim()==='CATEGORY')||[];
+  const ds=c=>((c||'').match(/\d/g)||[]).sort().join('');const N=cr.length-1;
+  rows.forEach(r=>{const id=(r[0]||'').trim();if(!id||id==='学生ID'||['CORRECT','CATEGORY','NATIONAL'].includes(id))return;
+   const key=norm(id);let s=DATA.students.find(x=>x.id===key);if(!s){s={id:key,name:id.replace(/　/g,' '),type:(r[1]||'').trim(),sid:'',res:{}};DATA.students.push(s);n++}
+   const half=j=>j<=100?0:1;const blank=[0,1].map(h=>{let any=false;for(let j=1;j<=N;j++)if(half(j)===h&&(r[1+j]||'').trim())any=true;return !any});
+   const areas={};let c=0,t=0;
+   for(let j=1;j<=N;j++){if(blank[half(j)])continue;const a=(cat[1+j]||'その他').trim()||'その他';const ok=ds(r[1+j])===ds(cr[1+j]);(areas[a]=areas[a]||[0,0]);areas[a][1]++;t++;if(ok){areas[a][0]++;c++}}
+   s.ext=s.ext||{};if(t){s.ext[xid]={name:xn,areas,c,n:t};m+=t}});
+  applyRoster();saveStudents();return{n,m,total:DATA.students.length};
+ }
+ const qs=DATA.qs.filter(q=>q.exam===examId);
+ rows.forEach(r=>{const id=(r[0]||'').trim();if(!id||id==='学生ID'||['CORRECT','CATEGORY','NATIONAL'].includes(id))return;
+  const key=norm(id);let s=DATA.students.find(x=>x.id===key);if(!s){s={id:key,name:id.replace(/　/g,' '),type:(r[1]||'').trim(),sid:'',res:{}};DATA.students.push(s);n++}
+  s.type=(r[1]||s.type||'').trim();
+  const blankSes={};['午前','午後'].forEach(se=>{const l=qs.filter(q=>q.ses===se);blankSes[se]=l.length&&l.every(q=>!((r[1+q.gn]||'').trim()))});
+  qs.forEach(q=>{const cell=r[1+q.gn];if(cell===undefined||blankSes[q.ses])return;const got=(cell.match(/\d/g)||[]).map(x=>+x-1);s.res[q.id]=isOk(q,got)?1:0;m++})});
+ applyRoster();saveStudents();return{n,m,total:DATA.students.length};
+}
+let CSVTXT='',CSVNAME='';
+function pickCsv(el){const f=el.files&&el.files[0];if(!f)return;CSVNAME=f.name;const rd=new FileReader();rd.onload=()=>{CSVTXT=String(rd.result);const n=$('#cfn');if(n)n.textContent='選択中：'+CSVNAME+'（読み込み済み）'};rd.readAsText(f,'utf-8')}
+function doImport(){
+ const pasted=(($('#ct')||{}).value||'').trim();const txt=pasted||CSVTXT;
+ if(!txt){ui.msg='CSVファイルを選ぶか、中身を貼り付けてください';render();return}
+ const ex=$('#ix').value,xn=(($('#exn')||{}).value||'').trim();
+ if(ex==='__ext'&&!xn){ui.msg='模試名を入力してください（例：10/28模試）';render();return}
+ const r=importVendor(txt,ex,xn);CSVTXT='';CSVNAME='';
+ ui.msg=`取り込み完了：新しい学生 ${r.n}名（合計 ${r.total}名）`;render();pushRoster();
+}
+function setSid(id,v){const s=DATA.students.find(x=>x.id===id);if(s){s.sid=v.trim();saveStudents()}}
+function applyRoster(){const R=store.get('kd_roster',{});DATA.students.forEach(s=>{const k=norm(s.name);if(R[k])s.sid=R[k]})}
+function importRoster(text){const R=store.get('kd_roster',{});let n=0;text.split(/\r?\n/).forEach(l=>{const m=l.trim().match(/^(\d{6,10})[\s,\t　]+(.+)$/);if(!m)return;R[norm(m[2])]=m[1];n++;
+  if(BANK&&!DATA.students.find(x=>norm(x.name)===norm(m[2])))DATA.students.push({id:norm(m[2]),name:m[2].replace(/\u3000/g,' ').trim(),type:'',sid:m[1],res:{}})});
+ store.set('kd_roster',R);applyRoster();saveStudents();return n}
+function doRoster(){const t=$('#rt').value;const n=importRoster(t);ui.msg=n?`学籍番号を${n}名分登録しました`:'「学籍番号 氏名」の形式で貼り付けてください';render();if(n)pushRoster()}
+function clearStudents(){DATA.students=[];saveStudents();ui.msg='学生データを消去しました';render()}
+
+/* ================= 描画 ================= */
+function render(){
+ const a=$('#app');const s=ui.screen;
+ if(s!=='login'&&s!=='adminlogin'&&s!=='admin'&&!me){ui.screen='login';return render()}
+ if(s==='login')a.innerHTML=loginView();
+ else if(s==='adminlogin')a.innerHTML=adminLoginView();
+ else if(s==='admin')a.innerHTML=ui.admin?adminView():adminLoginView();
+ else if(s==='home')a.innerHTML=homeView();
+ else if(s==='menu')a.innerHTML=menuView();
+ else if(s==='analysis')a.innerHTML=analysisView();
+ else if(s==='records')a.innerHTML=recordsView();
+ else if(s==='board')a.innerHTML=boardView();
+ else if(s==='plan')a.innerHTML=planView();
+ else if(s==='quiz')a.innerHTML=quizView();
+ else if(s==='result')a.innerHTML=resultView();
+}
+setInterval(()=>{const e=$('#tm');if(e&&sess&&sess.phase==='ans')e.textContent=Math.round((Date.now()-sess.t0)/1000)+'秒'},500);
+/* ================= クラウド保存（共有データベース） ================= */
+let DB=null,UID=null,PEER=null,GASAUTH=null;
+async function gas(o){const c=new AbortController();const t=setTimeout(()=>c.abort(),25000);try{const r=await fetch(GAS_URL,{method:'POST',body:JSON.stringify(o),signal:c.signal});return await r.json()}finally{clearTimeout(t)}}
+const CL={st:'確認中',sig:{},err:'',last:0};
+const hs=t=>{let h=5381;for(const c of String(t))h=((h<<5)+h+c.charCodeAt(0))|0;return 'k'+(h>>>0).toString(36)+String(t).length.toString(36)};
+async function cloudInit(){
+ if(GAS_URL){CL.st='Googleスプレッドシート連携';return}
+ try{const c=window.claude;DB=c&&c.use?await c.use('db'):null;const u=c&&c.use?await c.use('user'):null;UID=u&&u.id?await u.id():null}catch(e){DB=null}
+ if(!DB){CL.st='オフライン（この端末だけに保存）';if(ui.screen==='admin')render();return}
+ CL.st='接続OK';await pullRoster();await pullPeers();if(ui.screen==='login'||ui.screen==='admin')render();
+}
+function mergeSt(c){const l=DATA.students.find(x=>x.id===c.id);if(!l){DATA.students.push(c);return}
+ const nl=Object.keys(l.res||{}).length,nc=Object.keys(c.res||{}).length;
+ l.res=Object.assign({},c.res,l.res);if(nc>nl)l.res=Object.assign({},l.res,c.res);
+ l.ext=Object.assign({},c.ext||{},l.ext||{});l.sid=l.sid||c.sid;l.type=l.type||c.type}
+async function pullRoster(){try{const sn=await DB.collection('roster').get();let n=0;sn.docs.forEach(d=>{const x=(d.data()||{}).s;if(x&&x.id){mergeSt(x);n++}});if(n){applyRoster();saveStudents()}CL.st='接続OK（クラウドの名簿 '+n+'名）'}catch(e){CL.err=e.code||'error'}}
+async function pushRoster(){
+ if(GAS_URL){let n=0,bad=0;const todo=DATA.students.filter(s=>CL.sig[hs(s.id)]!==JSON.stringify(s));
+  for(let i=0;i<todo.length;i+=8){const ch=todo.slice(i,i+8);
+   try{const r=await gas({a:'putStudents',pw:ADMINPW,students:ch});if(r.ok){n+=ch.length;ch.forEach(s=>CL.sig[hs(s.id)]=JSON.stringify(s))}else{bad+=ch.length;CL.err=r.error||'error'}}catch(e){bad+=ch.length;CL.err='network'}}
+  CL.last=Date.now();ui.msg=bad?`スプレッドシート保存：${n}名保存、${bad}名は失敗（${CL.err}）`:`スプレッドシートに ${n}名分を保存しました`;render();return}
+ if(!DB){ui.msg='クラウドに接続できていません（この端末にだけ保存されています）';render();return}
+ let n=0,ng=0;
+ for(const s of DATA.students){const j=JSON.stringify(s),k=hs(s.id);if(CL.sig[k]===j)continue;
+  try{await DB.doc('roster/'+k).set({s});CL.sig[k]=j;n++}catch(e){ng++;CL.err=e.code||'error';if(e.code==='invalid_argument'||e.code==='resource_exhausted')break}
+  await new Promise(r=>setTimeout(r,120))}
+ CL.last=Date.now();ui.msg=ng?`クラウド保存：${n}名保存、${ng}名は失敗（先生アカウント〔編集者以上〕で開いているか確認してください）`:`クラウド保存：${n}名分を保存しました`;render();
+}
+async function pullAllProgress(){
+ if(GAS_URL){try{const r=await gas({a:'getProgress',pw:ADMINPW});if(!r.ok)throw new Error(r.error);let n=0;const lt=a=>a&&a.log&&a.log.length?a.log[a.log.length-1].ts:0;
+   r.list.forEach(x=>{const lo=store.get('kd_u_'+x.id,null);if(lt(x.U)>=lt(lo)){store.set('kd_u_'+x.id,x.U);n++}});ui.msg=`学習記録をスプレッドシートから ${n}名分更新しました`}catch(e){ui.msg='取得に失敗しました（'+(e.message||'network')+'）'}render();return}
+ if(!DB){ui.msg='クラウドに接続できていません';render();return}
+ try{const sn=await DB.collection('progress').get();let n=0;const byKey={};DATA.students.forEach(s=>byKey[hs(s.id)]=s);
+  sn.docs.forEach(d=>{const st=(d.data()||{}).st||{};Object.entries(st).forEach(([k,v])=>{const s=byKey[k];if(!s||!v.U)return;const lo=store.get('kd_u_'+s.id,null);const lt=a=>a&&a.log&&a.log.length?a.log[a.log.length-1].ts:0;if(lt(v.U)>=lt(lo)){store.set('kd_u_'+s.id,v.U);n++}})});
+  ui.msg=`学習記録をクラウドから ${n}名分更新しました`}catch(e){ui.msg='取得に失敗しました（'+(e.code||'error')+'）。編集者以上のアカウントで開いてください'}
+ render();
+}
+let pT=null,pBusy=false;
+function cloudPushU(){if(GAS_URL){if(!me||!GASAUTH)return;clearTimeout(pT);pT=setTimeout(gasPush,3000);return}if(!DB||!UID||!me)return;clearTimeout(pT);pT=setTimeout(doPushU,3000)}
+async function gasPush(){
+ if(pBusy||!me||!GASAUTH||!U)return;pBusy=true;
+ try{const mins={};const lim=new Date();lim.setDate(lim.getDate()-14);const ls=dstr(lim);[...Object.keys(U.days||{}),...Object.keys(U.focus||{})].forEach(d=>{if(d>=ls)mins[d]=studyMin(d)});
+  const r=await gas({a:'push',id:me.id,sid:GASAUTH.sid,name:GASAUTH.name,mins,U:Object.assign({},U,{log:U.log.slice(-800)})});if(r.ok)CL.last=Date.now();else CL.err=r.error||'error'}catch(e){CL.err='network'}
+ pBusy=false;
+}
+async function doPushU(){
+ if(pBusy||!DB||!UID||!me||!U)return;pBusy=true;
+ try{const mins={};const lim=new Date();lim.setDate(lim.getDate()-14);const ls=dstr(lim);[...Object.keys(U.days||{}),...Object.keys(U.focus||{})].forEach(d=>{if(d>=ls)mins[d]=studyMin(d)});
+  const key=hs(me.id);await DB.doc('progress/'+UID).set({st:{[key]:{n:me.name,upd:Date.now(),U:Object.assign({},U,{log:U.log.slice(-1200)})}}});
+  await DB.doc('peer/'+UID).set({mins,upd:Date.now()});CL.last=Date.now()}catch(e){CL.err=e.code||'error'}
+ pBusy=false;
+}
+async function cloudPullU(){
+ if(GAS_URL)return;
+ if(!DB||!UID||!me)return;const id=me.id;
+ try{const d=await DB.doc('progress/'+UID).get();const v=d.exists&&((d.data()||{}).st||{})[hs(id)];
+  const lt=a=>a&&a.log&&a.log.length?a.log[a.log.length-1].ts:0;
+  if(v&&v.U&&me&&me.id===id){if(lt(v.U)>lt(U)){U=Object.assign({q:{},log:[],days:{}},v.U);initU();store.set('kd_u_'+id,U);render()}else if(lt(U)>lt(v.U))cloudPushU()}
+  else if(U&&U.log.length)cloudPushU();
+  await pullPeers();if(ui.screen==='home')render()}catch(e){}
+}
+async function pullPeers(){if(GAS_URL){if(!GASAUTH)return;try{const r=await gas({a:'peers',sid:GASAUTH.sid,name:GASAUTH.name});if(r.ok){PEER=r.peers;if(ui.screen==='home')render()}}catch(e){}return}try{const sn=await DB.collection('peer').get();PEER=sn.docs.filter(d=>d.id!==UID).map(d=>(d.data()||{}).mins||{})}catch(e){}}
+function cloudCard(){return `<div class="card"><h3>☁️ クラウド保存</h3><div class="sub">状態：${esc(CL.st)}${CL.last?'／最終保存 '+new Date(CL.last).toLocaleTimeString('ja-JP'):''}${CL.err?'／直近エラー '+esc(CL.err):''}</div><div class="sub">名簿と模試成績を保存すると、学生は自分のスマホから同じデータでログインできます（各自の分だけが読み込まれます）。学習記録は学生のスマホから自動で保存されます。</div><button class="btn" onclick="pushRoster()">名簿・成績を${GAS_URL?'スプレッドシートに':'クラウドに'}保存</button><button class="btn g" onclick="pullAllProgress()">学生の学習記録を取得</button></div>`}
+
+loadBank();
+</script>
+</body>
+</html>
