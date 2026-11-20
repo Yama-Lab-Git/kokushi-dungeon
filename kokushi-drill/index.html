@@ -314,7 +314,7 @@ function mission(){
 function startMission(){const m=mission();if(m)startSession(m.list.map(q=>q.id),'mission','今日の課題：'+m.area);else startChallenge()}
 function startRecommend(){const l=needList().slice(0,10);if(l.length)startSession(l.map(q=>q.id),'recommend','今日のおすすめ');else startChallenge()}
 function startReview(){const l=needList();startSession(l.slice(0,20).map(q=>q.id),'review','間違えた問題の復習')}
-function startChallenge(){const l=shuffle(DATA.qs.filter(q=>q.sim));if(!l.length){ui.msg='類似問題のチャレンジは準備中です（これから追加されます）';render();return}startSession(l.slice(0,10).map(q=>q.id),'challenge','チャレンジ（類似問題）',true)}
+function startChallenge(){const all=DATA.qs.filter(q=>q.sim);const pr=shuffle(all.filter(q=>need(q))),rest=shuffle(all.filter(q=>!need(q)));const l=[...pr,...rest];if(!l.length){ui.msg='類似問題のチャレンジは準備中です（これから追加されます）';render();return}startSession(l.slice(0,10).map(q=>q.id),'challenge','チャレンジ（類似問題）',true)}
 function startArea(a){const l=needList(q=>q.area===a);const ids=l.length?l:DATA.qs.filter(q=>q.area===a);startSession(ids.slice(0,20).map(q=>q.id),'area','領域：'+a)}
 function startFilter(){
  const f=ui.f;let l=DATA.qs.filter(q=>(f.exam==='all'||q.exam===f.exam)&&(f.ses==='all'||q.ses===f.ses)&&(!f.prac||q.no<=20)&&(f.area==='all'||q.area===f.area));
