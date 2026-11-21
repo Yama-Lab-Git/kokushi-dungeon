@@ -165,7 +165,7 @@ const mockWrong=q=>me.res[q.id]===0;
 const need=q=>(mockWrong(q)||stq(q).wrong>0)&&stq(q).streak<2;
 const needList=f=>DATA.qs.filter(q=>need(q)&&(!f||f(q))).sort((a,b)=>tier(rate(b))-tier(rate(a))||rate(b)-rate(a));
 const saveU=()=>{if(ui.viewAs)return;store.set('kd_u_'+me.id,U);cloudPushU()};
-function areaStat(a){const qs=DATA.qs.filter(q=>q.area===a&&rate(q)>=60);const rem=qs.filter(need);const w=rem.reduce((s,q)=>s+tier(rate(q)),0);return{total:qs.length,rem:rem.length,w,done:qs.length-rem.length,pct:qs.length?Math.round((qs.length-rem.length)/qs.length*100):100}}
+function areaStat(a){const qs=DATA.qs.filter(q=>q.area===a&&rate(q)>=60&&(mockWrong(q)||stq(q).wrong>0));const rem=qs.filter(need);const w=rem.reduce((s,q)=>s+tier(rate(q)),0);return{total:qs.length,rem:rem.length,w,done:qs.length-rem.length,pct:qs.length?Math.round((qs.length-rem.length)/qs.length*100):100}}
 function mockAcc(ex,area){let n=0,c=0;DATA.qs.forEach(q=>{if((ex==='all'||q.exam===ex)&&(!area||q.area===area)){const r=me.res[q.id];if(r!==undefined){n++;c+=r}}});return{n,c,pct:n?Math.round(c/n*100):null}}
 function appAcc(area,last){const qm=Object.fromEntries(DATA.qs.map(q=>[q.id,q]));let l=U.log.filter(x=>!x.chal&&qm[x.qid]&&qm[x.qid].area===area);if(last)l=l.slice(-last);const c=l.filter(x=>x.ok).length;return{n:l.length,pct:l.length?Math.round(c/l.length*100):null}}
 function streakDays(){let n=0;const d=new Date();if(!U.days[dstr(d)])d.setDate(d.getDate()-1);while(U.days[dstr(d)]){n++;d.setDate(d.getDate()-1)}return n}
@@ -358,11 +358,11 @@ function homeView(){
  h+=`<div class="card"><h3 onclick="go('records')" style="cursor:pointer">💪 今日の頑張り <span class="sub" style="margin-left:auto">記録を見る ›</span></h3><div class="grid3"><div class="stat"><b>${td.n}</b><span class="sub">問</span></div><div class="stat"><b>${fmtMin(td.sec)}</b><span class="sub">取り組み時間</span></div><div class="stat"><b>${streakDays()}</b><span class="sub">連続日数</span></div></div>${td.n?`<div class="fb ok" style="margin-top:10px">今日も${td.n}問やった！えらい！</div>`:`<div class="sub" style="margin-top:8px">まずは1問から。やった分が全部力になる。</div>`}</div>`;
  h+=cheerHomeCard();
  h+=peerCard();
- h+=`<div class="card"><h3>🗺️ 領域の制覇マップ</h3><div class="sub">学内・全国どちらかの正答率が60%以上の問題のうち、取りこぼしを潰した割合（全体 ${all}%）</div>${bars(areas.map(x=>({n:x.a,p:x.pct,t:x.pct+'%'})),'g')}</div>`;
+ h+=`<div class="card"><h3>🗺️ 領域ごとの進み具合</h3><div class="sub">みんなが正解する問題（正答率60%以上）のうち、あなたが間違えた問題を、2回続けて正解できた割合です（全体 ${all}%）。領域をタップすると、その領域の問題から始められます。</div>${areas.map(x=>`<div class="line" onclick="startArea('${x.a}')" style="cursor:pointer"><div class="nm">${esc(x.a)}</div><div class="bw"><div class="bar g"><i style="width:${x.pct}%"></i></div></div><div class="pc" style="width:auto;white-space:nowrap">${x.total?(x.rem?`あと${x.rem}問`:'制覇！'):'間違いなし'}</div></div>`).join('')}</div>`;
  h+=`<div class="card"><h3>🚩 まずはここからスタート！（TOP5）</h3>${top5.length?top5.map((x,i)=>`<div class="line" onclick="startArea('${x.a}')" style="cursor:pointer"><div class="nm" style="width:auto;white-space:nowrap">${i+1}. ${esc(x.a)}</div><div class="bw sub" style="white-space:nowrap;text-align:right">のこり${x.rem}問・${x.pct}%</div><div class="pc" style="color:var(--pri)">▶</div></div>`).join(''):'<div class="sub">すべて制覇！すばらしい！</div>'}</div>`;
  h+=`<div class="card"><h3>📈 伸びてきている領域</h3>${gr.length?gr.map(x=>`<div class="line"><div class="nm">${esc(x.a)}</div><div class="bw sub">直近 ${x.p}% （模試より +${x.d}pt）</div><div class="pc">🌱</div></div>`).join(''):'<div class="sub">問題を解くと、ここに伸びが表示されます。</div>'}</div>`;
  h+=`<div class="card"><h3>🌟 自分の伸びしろ</h3>${weak.length?weak.map(x=>`<div class="line"><div class="nm">${esc(x.a)}</div><div class="bw sub">模試の正答率 ${x.pct}%（${x.c}/${x.n}問）</div></div>`).join('')+'<div class="sub" style="margin-top:6px">ここが伸びれば全体が一気に上がる！</div>':''}</div>`;
- h+=`<div class="card"><h3>🧭 今の位置と次の一歩</h3><div>いま、頻出問題の制覇率は <b>${all}%</b>。</div><div style="margin-top:6px">次の一歩：${ms?`【${esc(ms.area)}】から${ms.list.length}問を制覇しよう。`:'チャレンジで応用力を磨こう。'}</div></div>`;
+ h+=`<div class="card"><h3>🧭 今の位置と次の一歩</h3><div>いま、間違えた頻出問題の制覇率は <b>${all}%</b>。</div><div style="margin-top:6px">次の一歩：${ms?`【${esc(ms.area)}】から${ms.list.length}問を制覇しよう。`:'チャレンジで応用力を磨こう。'}</div></div>`;
  return h+'</div>'+nav('home');
 }
 
