@@ -44,6 +44,12 @@ h1,h2,h3{margin:0}
 nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:#fff;border-top:1px solid var(--line);display:flex;padding:6px 0 calc(6px + env(safe-area-inset-bottom));z-index:10}
 nav button{flex:1;border:0;background:none;font-size:11px;color:var(--sub);padding:4px;font-family:inherit}
 nav button span{display:block;font-size:22px;line-height:1.2}
+.stp{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;min-width:56px;padding:6px 4px;margin:3px;border:1.5px solid var(--line);border-radius:12px;background:#fff;font-family:inherit;font-size:11px;color:var(--ink)}
+.stp b{font-size:24px;font-weight:400;line-height:1.1}
+.stp:disabled{opacity:.4}
+.live{display:inline-block;width:9px;height:9px;border-radius:50%;background:#27ae60;margin-right:5px}
+.dot{position:absolute;top:0;right:12px;background:#e74c3c;color:#fff;border-radius:9px;font-size:10px;min-width:16px;height:16px;line-height:16px;padding:0 4px}
+nav button{position:relative}
 nav button.on{color:var(--pri);font-weight:700}
 input,select{width:100%;padding:13px;border:1.5px solid var(--line);border-radius:12px;font-size:16px;margin-top:6px;font-family:inherit;background:#fff}
 label{font-size:13px;font-weight:600;display:block;margin-top:12px}
@@ -183,8 +189,8 @@ async function login(){
  if(!s){ui.msg=DATA.students.length?'名前が見つかりません（学籍番号が登録済みの場合は一致が必要です）。':'まだ成績が取り込まれていません。先生に確認してください。';render();return}
  me=s;U=store.get('kd_u_'+s.id,{q:{},log:[],days:{}});initU();store.set('kd_last',s.id);ui.msg=null;go('home');cloudPullU();
 }
-function logout(){me=null;U=null;sess=null;ui.admin=false;go('login')}
-function go(s){ui.screen=s;if(s!=='login')ui.msg=null;render();window.scrollTo(0,0)}
+function logout(){me=null;U=null;sess=null;if(typeof CH!=='undefined')CH={feed:[],studying:0,today:0,week:0,sent:0,sentTo:[],inbox:[],ok:false,busy:false,ts:0,res:''};ui.admin=false;go('login')}
+function go(s){ui.screen=s;if(s!=='login')ui.msg=null;render();window.scrollTo(0,0);if((s==='home'||s==='cheer')&&typeof kick==='function')kick()}
 
 /* ================= 記録 ================= */
 function record(q,ok,sec,mode,chal){
@@ -324,7 +330,7 @@ function startFilter(){
 function setF(k,v){ui.f[k]=v;render()}
 
 /* ================= 画面 ================= */
-function nav(a){const it=[['home','🏠','ホーム'],['menu','✏️','問題'],['board','🗂️','ボード'],['plan','🗓️','計画'],['analysis','📊','分析']];return `<nav>${it.map(x=>`<button class="${a===x[0]?'on':''}" onclick="go('${x[0]}')"><span>${x[1]}</span>${x[2]}</button>`).join('')}</nav>`}
+function nav(a){const it=[['home','🏠','ホーム'],['menu','✏️','問題'],['board','🗂️','ボード'],['plan','🗓️','計画'],['cheer','🙌','応援'],['analysis','📊','分析']];return `<nav>${it.map(x=>`<button class="${a===x[0]?'on':''}" onclick="go('${x[0]}')"><span>${x[1]}</span>${x[2]}${x[0]==='cheer'&&typeof chUnseen==='function'&&chOn()&&chUnseen()?`<i class="dot">${chUnseen()}</i>`:''}</button>`).join('')}</nav>`}
 const toast=()=>ui.msg?`<div class="toast">${esc(ui.msg)}</div>`:'';
 function bars(rows,cls){return rows.map(r=>`<div class="line"><div class="nm">${esc(r.n)}</div><div class="bw"><div class="bar ${cls||''}"><i style="width:${r.p}%"></i></div></div><div class="pc">${r.t}</div></div>`).join('')}
 
@@ -348,6 +354,7 @@ function homeView(){
  h+=todayCard();
  h+=`<div class="card"><h3>⭐ 今日のおすすめ</h3><button class="btn g s" onclick="startRecommend()">🔥 優先度の高い問題から10問</button><button class="btn g s" onclick="startReview()">🔁 間違えた問題をくり返し</button><button class="btn g s" onclick="startChallenge()">🚀 チャレンジ（類似問題）</button><button class="btn g s" onclick="go('plan')">👩‍🏫 先生にアポをとる</button></div>`;
  h+=`<div class="card"><h3 onclick="go('records')" style="cursor:pointer">💪 今日の頑張り <span class="sub" style="margin-left:auto">記録を見る ›</span></h3><div class="grid3"><div class="stat"><b>${td.n}</b><span class="sub">問</span></div><div class="stat"><b>${fmtMin(td.sec)}</b><span class="sub">取り組み時間</span></div><div class="stat"><b>${streakDays()}</b><span class="sub">連続日数</span></div></div>${td.n?`<div class="fb ok" style="margin-top:10px">今日も${td.n}問やった！えらい！</div>`:`<div class="sub" style="margin-top:8px">まずは1問から。やった分が全部力になる。</div>`}</div>`;
+ h+=cheerHomeCard();
  h+=peerCard();
  h+=`<div class="card"><h3>🗺️ 領域の制覇マップ</h3><div class="sub">学内・全国どちらかの正答率が60%以上の問題のうち、取りこぼしを潰した割合（全体 ${all}%）</div>${bars(areas.map(x=>({n:x.a,p:x.pct,t:x.pct+'%'})),'g')}</div>`;
  h+=`<div class="card"><h3>🚩 まずはここからスタート！（TOP5）</h3>${top5.length?top5.map((x,i)=>`<div class="line" onclick="startArea('${x.a}')" style="cursor:pointer"><div class="nm" style="width:auto;white-space:nowrap">${i+1}. ${esc(x.a)}</div><div class="bw sub" style="white-space:nowrap;text-align:right">のこり${x.rem}問・${x.pct}%</div><div class="pc" style="color:var(--pri)">▶</div></div>`).join(''):'<div class="sub">すべて制覇！すばらしい！</div>'}</div>`;
@@ -420,6 +427,7 @@ function adminView(){
  let h=`<div class="hero" style="padding-bottom:24px"><h2>🧑‍🏫 学習記録（先生用）</h2><div class="msg">学生ごとの取り組み量・時間</div></div><div class="wrap" style="margin-top:12px">${toast()}<div class="card"><table class="tbl"><tr><th>学生</th><th>問題数</th><th>正答率</th><th>合計</th><th>平均/問</th><th>最終</th></tr>${st.map(x=>`<tr class="cl" onclick="ui.sel='${x.s.id}';render()"><td>${esc(x.s.name)}<br><span class="sub">${esc(x.s.type||x.s.id)}</span></td><td>${x.n}</td><td>${x.n?Math.round(x.ok/x.n*100)+'%':'-'}</td><td>${fmtMin(x.sec)}</td><td>${x.n?Math.round(x.sec/x.n)+'秒':'-'}</td><td>${esc(x.last.slice(5))}</td></tr>`).join('')}</table></div>`;
  if(ui.sel){const x=st.find(y=>y.s.id===ui.sel);if(x){const by={};x.u.log.forEach(l=>{const b=by[l.qid]||(by[l.qid]={n:0,ok:0,sec:0});b.n++;b.ok+=l.ok;b.sec+=l.sec});const rows=Object.entries(by).map(([id,b])=>({id,...b,avg:Math.round(b.sec/b.n)})).sort((a,b)=>b.avg-a.avg).slice(0,15);
   h+=`<div class="card"><h3>${esc(x.s.name)}さん：問題ごとの時間（長い順）</h3><div class="sub">取り組んだ日数 ${x.days}日／制覇 ${x.mastered}問</div><table class="tbl"><tr><th>問題</th><th>領域</th><th>回数</th><th>正答</th><th>平均秒</th></tr>${rows.map(r=>{const q=qm[r.id];return `<tr><td>${q?esc(examName(q.exam))+' '+esc(q.ses)+q.no:esc(r.id)}</td><td>${q?esc(q.area):''}</td><td>${r.n}</td><td>${r.ok}/${r.n}</td><td>${r.avg}</td></tr>`}).join('')}</table></div>`}}
+ h+=roomAdminCard();
  h+=cloudCard();
  h+=`<div class="card"><h3>🪪 学籍番号の名簿</h3><div class="sub">「学籍番号 氏名」を1行ずつ貼り付け（タブ・スペース区切り可）。登録済み：${Object.keys(store.get('kd_roster',{})).length}名。成績CSVの学生名と自動で結びつけます。</div><textarea id="rt" rows="5" style="width:100%" placeholder="12345678 国試　太郎"></textarea><button class="btn" onclick="doRoster()">名簿を登録</button></div>`;
  h+=`<div class="card"><h3>📥 模試の成績を取り込む</h3><div class="sub">問題バンク：${DATA.exams.map(e=>esc(e.name)+'（'+DATA.qs.filter(q=>q.exam===e.id).length+'問）').join('、')}。模試の成績CSV（学生ID・学生種別・問題1〜／CORRECT・CATEGORY・NATIONAL行つき）を選びます。</div><label>どの模試の成績？</label><select id="ix">${DATA.exams.map(e=>`<option value="${esc(e.id)}">${esc(e.name)}</option>`).join('')}<option value="__ext">（問題データなし）CSVの正解・分野だけで集計</option></select><label>問題データなしの場合の模試名</label><input id="exn" placeholder="例：10/28模試"><label>成績CSV（ファイルを選ぶ）</label><input type="file" id="cf" accept=".csv,.txt,text/csv,text/plain,*/*" onchange="pickCsv(this)"><div class="sub" id="cfn">${CSVNAME?'選択中：'+esc(CSVNAME):''}</div><label>または、CSVの中身をここに貼り付け</label><textarea id="ct" rows="3" style="width:100%" placeholder="学生ID,学生種別,問題1,…"></textarea><button class="btn" onclick="doImport()">取り込む</button><div class="sub" style="margin-top:8px">登録済みの学生：${DATA.students.length}名</div>${BANK?'<button class="btn g s" onclick="clearStudents()">学生データを消去</button>':'<div class="sub">※ 現在はデモ用データです（問題バンクが見つかりません）。</div>'}</div>`;
@@ -454,7 +462,7 @@ let hk=rnd(HITOKOTO);
 function newHk(){let n;do{n=rnd(HITOKOTO)}while(n===hk);hk=n;render()}
 function initU(){
  U.plan=U.plan||{goal:50};U.plan.goal=U.plan.goal||50;U.sched=U.sched||defaultSched();U.focus=U.focus||{};
- U.tasks=U.tasks||[];U.appts=U.appts||[];hk=rnd(HITOKOTO);ui.sd=null;ui.sg=null;
+ U.tasks=U.tasks||[];U.appts=U.appts||[];U.cheer=U.cheer||{mode:'anon',nick:'',show:false,recv:true,seen:0};hk=rnd(HITOKOTO);ui.sd=null;ui.sg=null;
 }
 /* ---- 1日スケジュール（15分単位） ---- */
 const SEG=[{n:'午前',a:24,b:48},{n:'午後',a:48,b:68},{n:'夕方',a:68,b:80},{n:'夜',a:80,b:96}];
@@ -660,6 +668,7 @@ function render(){
  else if(s==='records')a.innerHTML=recordsView();
  else if(s==='board')a.innerHTML=boardView();
  else if(s==='plan')a.innerHTML=planView();
+ else if(s==='cheer')a.innerHTML=cheerView();
  else if(s==='quiz')a.innerHTML=quizView();
  else if(s==='result')a.innerHTML=resultView();
 }
@@ -733,6 +742,82 @@ async function checkServer(){
 function srvTable(){if(!ui.srv)return '';const L=ui.srv;const full=L.filter(x=>x.nres>0||(x.ext||[]).length).length;
  return `<div class="sub" style="margin-top:8px">スプレッドシートに登録済み：${L.length}名（成績あり ${full}名）</div><table class="tbl"><tr><th>氏名</th><th>学籍番号</th><th>問題成績</th><th>問題なし模試</th></tr>${L.map(x=>`<tr><td>${esc(x.name)}</td><td>${esc(x.sid||'-')}</td><td>${x.nres}問</td><td>${esc((x.ext||[]).join('、')||'-')}</td></tr>`).join('')}</table>`}
 function cloudCard(){return `<div class="card"><h3>☁️ クラウド保存</h3><div class="sub">状態：${esc(CL.st)}${CL.last?'／最終保存 '+new Date(CL.last).toLocaleTimeString('ja-JP'):''}${CL.err?'／直近エラー '+esc(CL.err):''}</div><div class="sub">名簿と模試成績を保存すると、学生は自分のスマホから同じデータでログインできます（各自の分だけが読み込まれます）。学習記録は学生のスマホから自動で保存されます。</div><button class="btn" onclick="pushRoster()">名簿・成績を${GAS_URL?'スプレッドシートに':'クラウドに'}保存</button><button class="btn g" onclick="pullAllProgress()">学生の学習記録を取得</button>${GAS_URL?'<button class="btn g" onclick="checkServer()">登録状況を確認</button>'+srvTable():''}</div>`}
+
+/* ================= 応援ルーム（スタンプ・今、勉強中） ================= */
+const CHEER_STAMPS=[['👏','ナイス'],['🔥','その調子'],['💪','ファイト'],['🌟','すごい'],['👍','いいね'],['📚','勉強中'],['☕','休憩も'],['🎯','合格へ'],['🌱','成長中'],['🙌','一緒に']];
+const CHEER_MAX=5,CHEER_OPEN=5,WEEK_GOAL=2000;
+let CH={feed:[],studying:0,today:0,week:0,sent:0,sentTo:[],inbox:[],ok:false,busy:false,ts:0,res:''};
+const chSet=()=>(U.cheer=U.cheer||{mode:'anon',nick:'',show:false,recv:true,seen:0});
+const chOn=()=>!!GAS_URL;
+function studyingNow(){if(document.hidden)return false;if(ui.screen==='quiz'||TM)return true;const l=U.log&&U.log.length?U.log[U.log.length-1].ts:0;return Date.now()-l<5*60000}
+function kick(){if(chOn()&&me&&Date.now()-CH.ts>20000)pulse()}
+async function pulse(send){
+ if(!chOn()||!me||!GASAUTH||!U)return;
+ if(CH.busy){if(send){ui.msg='通信中です。少し待ってからもう一度押してね';render()}return}
+ CH.busy=true;const c=chSet(),td=U.days[today()]||{n:0};
+ try{const r=await gas({a:'pulse',sid:GASAUTH.sid,name:GASAUTH.name,mode:c.mode,nick:c.nick,show:!!c.show,recv:c.recv!==false,n:td.n,nw:weekN(),streak:streakDays(),studying:studyingNow(),send:send||null});
+  if(r.ok){CH.ok=true;CH.ts=Date.now();CH.feed=r.feed||[];CH.inbox=r.inbox||[];CH.studying=r.studying||0;CH.today=r.todayTotal||0;CH.week=r.weekTotal||0;CH.sent=r.sent||0;CH.sentTo=r.sentTo||[];
+   if(send){const M={ok:'送りました！',locked:`今日${CHEER_OPEN}問解くと、スタンプが送れます`,limit:`今日は${CHEER_MAX}回まで送れます`,dup:'この人には今日もう送りました',off:'この人は応援を受け取らない設定です',bad:'送れませんでした'};ui.msg=M[r.res]||'送れませんでした'}}
+  else if(send){ui.msg='送れませんでした（'+(r.error||'error')+'）'}}
+ catch(e){if(send)ui.msg='通信できませんでした'}
+ CH.busy=false;if(ui.screen==='home'||ui.screen==='cheer')render();
+}
+setInterval(()=>{if(chOn()&&me&&!document.hidden)pulse()},45000);
+const chUnseen=()=>CH.inbox.filter(x=>x.ts>(chSet().seen||0)).length;
+function cheerHomeCard(){
+ if(!chOn())return '';const n=chUnseen();const td=U.days[today()]||{n:0};
+ return `<div class="card" onclick="go('cheer')" style="cursor:pointer"><h3>🙌 応援ルーム <span class="sub" style="margin-left:auto">開く ›</span></h3><div><span class="live"></span>いま <b>${CH.ok?CH.studying:'-'}</b>人が勉強中　／　今週のクラス合計 <b>${CH.ok?CH.week:'-'}</b>問</div>${n?`<div style="margin-top:6px;font-weight:700;color:var(--pri)">💌 ${n}件の応援が届いています</div>`:''}<div class="sub" style="margin-top:4px">${td.n>=CHEER_OPEN?'今日はスタンプが送れます':`あと${CHEER_OPEN-td.n}問解くと、スタンプが送れます`}</div></div>`;
+}
+function setCh(k,v){const c=chSet();c[k]=v;saveU();pulse();render()}
+function sendStamp(id,k){const td=U.days[today()]||{n:0};if(td.n<CHEER_OPEN){ui.msg=`今日${CHEER_OPEN}問解くと、スタンプが送れます（あと${CHEER_OPEN-td.n}問）`;render();return}if(CH.sent>=CHEER_MAX){ui.msg=`今日は${CHEER_MAX}回まで送れます`;render();return}ui.cheerSel=null;pulse({to:id,stamp:k})}
+function selCheer(id){ui.cheerSel=ui.cheerSel===id?null:id;render()}
+function cheerView(){
+ if(!chOn())return `<div class="hero" style="padding-bottom:30px"><div class="hi">🙌 応援ルーム</div></div><div class="wrap pull"><div class="card"><div class="sub">この機能は、公開版のアプリ（GitHub Pages）で使えます。</div></div></div>`+nav('cheer');
+ const c=chSet(),td=U.days[today()]||{n:0},open=td.n>=CHEER_OPEN,left=Math.max(0,CHEER_MAX-CH.sent);
+ const un=CH.inbox.filter(x=>x.ts>(c.seen||0)).length;
+ if(CH.inbox.length&&CH.inbox[0].ts>(c.seen||0)){setTimeout(()=>{if(ui.screen==='cheer'&&me){chSet().seen=Date.now();saveU()}},1500)}
+ let h=`<div class="hero" style="padding-bottom:30px"><div class="hi">🙌 応援ルーム</div><div class="cd"><b>${CH.ok?CH.studying:'-'}</b><span>人が勉強中</span></div><div class="msg">勉強したら、スタンプで仲間を応援しよう。</div></div><div class="wrap pull">${toast()}`;
+ h+=`<div class="card"><h3>🏁 クラスの今週の目標</h3><div class="bar"><i style="width:${Math.min(100,Math.round(CH.week/WEEK_GOAL*100))}%"></i></div><div class="sub" style="margin-top:6px">みんなで ${CH.week} / ${WEEK_GOAL}問　（今日のクラス合計 ${CH.today}問）</div></div>`;
+ h+=`<div class="card"><h3>🎁 スタンプ</h3>${open?`<div>今日あと <b>${left}</b> 回、送れます。</div>`:`<div>🔒 あと <b>${CHEER_OPEN-td.n}</b> 問解くと、スタンプが送れます。</div>`}<div class="sub">同じ人には1日1回。成績や正解数は表示されません（解いた量だけ）。</div></div>`;
+ h+=`<div class="card"><h3>💌 届いた応援${un?` <span class="tb t3">${un}</span>`:''}</h3>${CH.inbox.length?CH.inbox.slice(0,15).map(x=>{const st=CHEER_STAMPS[x.k]||['🙌','']; return `<div class="line"><div class="nm" style="width:auto;font-size:24px">${st[0]}</div><div class="bw" style="font-size:14px"><b>${esc(x.from)}</b>さんから「${esc(st[1])}」</div><div class="pc sub" style="width:auto">${new Date(x.ts).toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'})}</div></div>`}).join(''):'<div class="sub">まだ届いていません。まずは自分から送ってみよう！</div>'}</div>`;
+ const feed=[...CH.feed].sort((a,b)=>b.studying-a.studying||b.n-a.n);
+ h+=`<div class="card"><h3>👥 みんなの様子</h3>${feed.length?feed.map(m=>{const sel=ui.cheerSel===m.id,done=CH.sentTo.includes(m.id);
+   return `<div class="line" onclick="${m.r&&open&&!done&&left?`selCheer('${esc(m.id)}')`:''}" style="flex-wrap:wrap;cursor:${m.r&&open&&!done&&left?'pointer':'default'}"><div class="bw" style="font-size:15px">${m.studying?'<span class="live"></span>':''}<b>${esc(m.name)}</b>${m.studying?'　勉強中':''}</div><div class="sub" style="white-space:nowrap">今日${m.n}問${m.streak>1?`・🔥${m.streak}日`:''}</div><div style="width:34px;text-align:right">${!m.r?'🔕':done?'✅':(open&&left?'👉':'')}</div>${sel?`<div style="width:100%;margin-top:4px">${CHEER_STAMPS.map((st,k)=>`<button class="stp" onclick="event.stopPropagation();sendStamp('${esc(m.id)}',${k})"><b>${st[0]}</b>${esc(st[1])}</button>`).join('')}</div>`:''}</div>`}).join(''):'<div class="sub">表示を「見せる」にしている人が、ここに並びます。</div>'}</div>`;
+ h+=`<div class="card"><h3>⚙️ 自分の設定</h3>
+  <label>みんなへの表示名</label>
+  <div style="display:flex;gap:6px;margin-bottom:8px">${[['anon','匿名'],['nick','ニックネーム'],['real','実名']].map(x=>`<button class="btn ${c.mode===x[0]?'':'g'} s" style="margin:0" onclick="setCh('mode','${x[0]}')">${x[1]}</button>`).join('')}</div>
+  ${c.mode==='nick'?`<input value="${esc(c.nick||'')}" maxlength="8" placeholder="ニックネーム（8文字まで）" onchange="setCh('nick',this.value.trim().slice(0,8))">`:''}
+  <div class="sub">現在の表示：<b>${esc(c.mode==='real'?me.name:(c.mode==='nick'&&c.nick?c.nick:'匿名さん'))}</b></div>
+  <label style="margin-top:10px">みんなの一覧に自分を</label>
+  <div style="display:flex;gap:6px"><button class="btn ${c.show?'':'g'} s" style="margin:0" onclick="setCh('show',true)">見せる</button><button class="btn ${c.show?'g':''} s" style="margin:0" onclick="setCh('show',false)">見せない</button></div>
+  <div class="sub">見せない場合も、「勉強中の人数」には数えられます（名前は出ません）。</div>
+  <label style="margin-top:10px">スタンプの受け取り</label>
+  <div style="display:flex;gap:6px"><button class="btn ${c.recv!==false?'':'g'} s" style="margin:0" onclick="setCh('recv',true)">受け取る</button><button class="btn ${c.recv!==false?'g':''} s" style="margin:0" onclick="setCh('recv',false)">受け取らない</button></div>
+  <div class="sub">公開される情報は「今日の問題数・連続日数・勉強中かどうか」だけです。正解数や得点は誰にも見えません。</div></div>`;
+ return h+'</div>'+nav('cheer');
+}
+
+/* ================= 先生用：勉強状況と応援ルーム ================= */
+async function pullRoom(){
+ if(!GAS_URL){ui.msg='この機能は公開版（GitHub Pages）で使えます';render();return}
+ try{const r=await gas({a:'adminRoom',pw:ADMINPW});if(!r.ok)throw new Error(r.error||'error');ui.room=r;ui.msg='勉強状況を更新しました（'+r.list.length+'名）'}catch(e){ui.msg='取得に失敗しました（'+(e.message||'通信エラー')+'）。Apps Scriptを新しいバージョンでデプロイしたか確認してください'}render();
+}
+async function hideNick(id,hide){
+ try{const r=await gas({a:'adminNick',pw:ADMINPW,id,hide});if(!r.ok)throw new Error(r.error);ui.msg=hide?'表示名を「匿名さん」にしました':'表示名の制限を解除しました';await pullRoom()}catch(e){ui.msg='変更できませんでした（'+(e.message||'通信エラー')+'）';render()}
+}
+function setRmSort(k){ui.rmSort=k;render()}
+const ago=ms=>{if(!ms)return '-';const m=Math.round((Date.now()-ms)/60000);if(m<1)return 'いま';if(m<60)return m+'分前';const h=Math.round(m/60);if(h<24)return h+'時間前';return Math.round(h/24)+'日前'};
+function roomAdminCard(){
+ let h=`<div class="card"><h3>👥 勉強状況と応援ルーム</h3><div class="sub">学生がアプリを開いた記録です。先生には、匿名・ニックネームの学生も実名で表示されます（学生には事前に伝えておきましょう）。</div><button class="btn s" onclick="pullRoom()">🔄 最新の状況を読み込む</button>`;
+ const R=ui.room;if(!R)return h+'</div>';
+ const k=ui.rmSort||'old';let L=[...R.list];
+ L.sort(k==='old'?(a,b)=>(a.lastStudy||0)-(b.lastStudy||0):k==='today'?(a,b)=>b.n-a.n:(a,b)=>b.nw-a.nw);
+ const used=L.filter(x=>x.used).length,stu=L.filter(x=>x.studying).length,td=L.reduce((s,x)=>s+x.n,0),wk=L.reduce((s,x)=>s+x.nw,0),vis=L.filter(x=>x.show).length;
+ h+=`<div class="grid3" style="margin-top:10px"><div class="stat"><b>${stu}</b><span class="sub">いま勉強中</span></div><div class="stat"><b>${used}/${L.length}</b><span class="sub">応援ルーム利用</span></div><div class="stat"><b>${td}</b><span class="sub">今日の合計(問)</span></div></div><div class="sub" style="margin-top:6px">今週の合計 ${wk}問　／　一覧に公開している学生 ${vis}名</div>`;
+ h+=`<div style="display:flex;gap:6px;margin:8px 0">${[['old','最終勉強が古い順'],['today','今日の問題数'],['week','今週の問題数']].map(x=>`<button class="btn ${k===x[0]?'':'g'} s" style="margin:0;padding:8px 4px;font-size:12px" onclick="setRmSort('${x[0]}')">${x[1]}</button>`).join('')}</div>`;
+ h+=`<table class="tbl"><tr><th>学生</th><th>今日</th><th>今週</th><th>連続</th><th>最終勉強</th></tr>${L.map(x=>`<tr><td>${x.studying?'<span class="live"></span>':''}${esc(x.name)}<br><span class="sub">${x.used?`表示：${esc(x.disp)}${x.show?'（公開）':'（非公開）'}${x.recv?'':'・受取オフ'}${x.hidden?'・制限中':''}`:'未使用'}${x.used?`<br>送${x.sent}／受${x.recvN}`:''}</span>${x.used&&x.disp&&x.disp!=='匿名さん'&&x.mode!=='real'?` <a href="#" onclick="hideNick('${esc(x.id)}',true);return false" class="sub">匿名にする</a>`:''}${x.hidden?` <a href="#" onclick="hideNick('${esc(x.id)}',false);return false" class="sub">制限を解除</a>`:''}</td><td>${x.n}</td><td>${x.nw}</td><td>${x.streak||0}日</td><td>${ago(x.lastStudy||x.lastPush)}</td></tr>`).join('')}</table></div>`;
+ return h;
+}
 
 loadBank();
 </script>
