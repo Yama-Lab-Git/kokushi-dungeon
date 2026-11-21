@@ -189,7 +189,7 @@ async function login(){
  if(!s){ui.msg=DATA.students.length?'名前が見つかりません（学籍番号が登録済みの場合は一致が必要です）。':'まだ成績が取り込まれていません。先生に確認してください。';render();return}
  me=s;U=store.get('kd_u_'+s.id,{q:{},log:[],days:{}});initU();store.set('kd_last',s.id);ui.msg=null;go('home');cloudPullU();
 }
-function logout(){me=null;U=null;sess=null;if(typeof CH!=='undefined')CH={feed:[],studying:0,today:0,week:0,sent:0,sentTo:[],inbox:[],ok:false,busy:false,ts:0,res:''};ui.admin=false;go('login')}
+function logout(){ui.testMode=false;ui.viewAs=false;me=null;U=null;sess=null;if(typeof CH!=='undefined')CH={feed:[],studying:0,today:0,week:0,sent:0,sentTo:[],inbox:[],ok:false,busy:false,ts:0,res:''};ui.admin=false;go('login')}
 function go(s){ui.screen=s;if(s!=='login')ui.msg=null;render();window.scrollTo(0,0);if((s==='home'||s==='cheer')&&typeof kick==='function')kick()}
 
 /* ================= 記録 ================= */
@@ -424,17 +424,31 @@ async function adminLogin(){const pw=$('#pw').value;
  if(GAS_URL){try{const r=await gas({a:'checkAdmin',pw});if(r.ok){ADMINPW=pw;ui.admin=true;ui.msg=null;go('admin')}else{ui.msg='パスワードが違います';render()}}catch(e){ui.msg='サーバーに接続できません';render()}return}
  if(pw===ADMIN_PW){ui.admin=true;ui.msg=null;go('admin')}else{ui.msg='パスワードが違います';render()}}
 function allStats(){return DATA.students.map(s=>{const u=store.get('kd_u_'+s.id,{q:{},log:[],days:{}});const l=u.log.filter(x=>!x.chal);const sec=u.log.reduce((a,x)=>a+x.sec,0);const dk=Object.keys(u.days).sort();return{s,u,n:u.log.length,ok:u.log.filter(x=>x.ok).length,sec,days:dk.length,last:dk[dk.length-1]||'-',mastered:Object.values(u.q).filter(x=>x.streak>=2).length}})}
+const ADM_MENU=[['status','👥','学生の状況','勉強の記録・学生の画面を見る'],['room','🙌','応援ルーム管理','勉強中・表示名の管理'],['test','🧪','テスト学生で試す','学生モードの動作確認'],['register','📥','模試・名簿の登録','名簿・成績CSVの取り込み'],['cloud','☁️','クラウド保存','保存状態・登録状況'],['export','📤','記録の書き出し','CSV出力']];
+function setAm(k){ui.am=k;ui.sel=null;ui.msg=null;render();window.scrollTo(0,0)}
 function adminView(){
- const st=allStats();const qm=Object.fromEntries(DATA.qs.map(q=>[q.id,q]));
- let h=`<div class="hero" style="padding-bottom:24px"><h2>🧑‍🏫 学習記録（先生用）</h2><div class="msg">学生ごとの取り組み量・時間</div></div><div class="wrap" style="margin-top:12px">${toast()}<div class="card"><table class="tbl"><tr><th>学生</th><th>問題数</th><th>正答率</th><th>合計</th><th>平均/問</th><th>最終</th></tr>${st.map(x=>`<tr class="cl" onclick="ui.sel='${x.s.id}';render()"><td>${esc(x.s.name)}<br><span class="sub">${esc(x.s.type||x.s.id)}</span></td><td>${x.n}</td><td>${x.n?Math.round(x.ok/x.n*100)+'%':'-'}</td><td>${fmtMin(x.sec)}</td><td>${x.n?Math.round(x.sec/x.n)+'秒':'-'}</td><td>${esc(x.last.slice(5))}</td></tr>`).join('')}</table></div>`;
+ const st=allStats();const qm=Object.fromEntries(DATA.qs.map(q=>[q.id,q]));const am=ui.am||null;
+ const ttl=am?(ADM_MENU.find(x=>x[0]===am)||['','','先生用'])[2]:'先生用メニュー';
+ let h=`<div class="hero" style="padding-bottom:24px"><h2>🧑‍🏫 ${ttl}</h2><div class="msg">${am?'':'見たい項目を選んでください'}</div></div><div class="wrap" style="margin-top:12px">${toast()}`;
+ if(!am){
+  h+=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">${ADM_MENU.map(x=>`<button class="card" style="text-align:left;cursor:pointer;font-family:inherit;border:1.5px solid var(--line);margin:0" onclick="setAm('${x[0]}')"><div style="font-size:28px">${x[1]}</div><div style="font-weight:700;margin-top:4px">${x[2]}</div><div class="sub">${x[3]}</div></button>`).join('')}</div><button class="btn g" style="margin-top:14px" onclick="logout()">終了</button></div>`;
+  return h;
+ }
+ h+=`<button class="btn g s" style="margin-bottom:8px" onclick="setAm(null)">← メニューに戻る</button>`;
+ if(am==='status'){
+  h+=`<div class="card"><table class="tbl"><tr><th>学生</th><th>問題数</th><th>正答率</th><th>合計</th><th>平均/問</th><th>最終</th></tr>${st.map(x=>`<tr class="cl" onclick="ui.sel='${x.s.id}';render()"><td>${esc(x.s.name)}<br><span class="sub">${esc(x.s.type||x.s.id)}</span></td><td>${x.n}</td><td>${x.n?Math.round(x.ok/x.n*100)+'%':'-'}</td><td>${fmtMin(x.sec)}</td><td>${x.n?Math.round(x.sec/x.n)+'秒':'-'}</td><td>${esc(x.last.slice(5))}</td></tr>`).join('')}</table></div>`;
  if(ui.sel){const x=st.find(y=>y.s.id===ui.sel);if(x){const by={};x.u.log.forEach(l=>{const b=by[l.qid]||(by[l.qid]={n:0,ok:0,sec:0});b.n++;b.ok+=l.ok;b.sec+=l.sec});const rows=Object.entries(by).map(([id,b])=>({id,...b,avg:Math.round(b.sec/b.n)})).sort((a,b)=>b.avg-a.avg).slice(0,15);
   h+=`<div class="card"><h3>${esc(x.s.name)}さん：問題ごとの時間（長い順）</h3><div class="sub">取り組んだ日数 ${x.days}日／制覇 ${x.mastered}問</div><button class="btn b s" onclick="viewAs('${esc(x.s.id)}')">👁 この学生の画面を見る</button><table class="tbl"><tr><th>問題</th><th>領域</th><th>回数</th><th>正答</th><th>平均秒</th></tr>${rows.map(r=>{const q=qm[r.id];return `<tr><td>${q?esc(examName(q.exam))+' '+esc(q.ses)+q.no:esc(r.id)}</td><td>${q?esc(q.area):''}</td><td>${r.n}</td><td>${r.ok}/${r.n}</td><td>${r.avg}</td></tr>`}).join('')}</table></div>`}}
- h+=roomAdminCard();
- h+=cloudCard();
+ }
+ if(am==='room')h+=roomAdminCard();
+ if(am==='test')h+=testAdminCard();
+ if(am==='cloud')h+=cloudCard();
+ if(am==='register'){
  h+=`<div class="card"><h3>🪪 学籍番号の名簿</h3><div class="sub">「学籍番号 氏名」を1行ずつ貼り付け（タブ・スペース区切り可）。登録済み：${Object.keys(store.get('kd_roster',{})).length}名。成績CSVの学生名と自動で結びつけます。</div><textarea id="rt" rows="5" style="width:100%" placeholder="12345678 国試　太郎"></textarea><button class="btn" onclick="doRoster()">名簿を登録</button></div>`;
  h+=`<div class="card"><h3>📥 模試の成績を取り込む</h3><div class="sub">問題バンク：${DATA.exams.map(e=>esc(e.name)+'（'+DATA.qs.filter(q=>q.exam===e.id).length+'問）').join('、')}。模試の成績CSV（学生ID・学生種別・問題1〜／CORRECT・CATEGORY・NATIONAL行つき）を選びます。</div><label>どの模試の成績？</label><select id="ix">${DATA.exams.map(e=>`<option value="${esc(e.id)}">${esc(e.name)}</option>`).join('')}<option value="__ext">（問題データなし）CSVの正解・分野だけで集計</option></select><label>問題データなしの場合の模試名</label><input id="exn" placeholder="例：10/28模試"><label>成績CSV（ファイルを選ぶ）</label><input type="file" id="cf" accept=".csv,.txt,text/csv,text/plain,*/*" onchange="pickCsv(this)"><div class="sub" id="cfn">${CSVNAME?'選択中：'+esc(CSVNAME):''}</div><label>または、CSVの中身をここに貼り付け</label><textarea id="ct" rows="3" style="width:100%" placeholder="学生ID,学生種別,問題1,…"></textarea><button class="btn" onclick="doImport()">取り込む</button><div class="sub" style="margin-top:8px">登録済みの学生：${DATA.students.length}名</div>${BANK?'<button class="btn g s" onclick="clearStudents()">学生データを消去</button>':'<div class="sub">※ 現在はデモ用データです（問題バンクが見つかりません）。</div>'}</div>`;
- h+=`<div class="card"><h3>📤 記録の書き出し（CSV）</h3><button class="btn g s" onclick="exportLog()">CSVを表示</button><textarea id="out" readonly style="display:none"></textarea></div><button class="btn g" onclick="logout()">終了</button></div>`;
- return h;
+ }
+ if(am==='export')h+=`<div class="card"><h3>📤 記録の書き出し（CSV）</h3><button class="btn g s" onclick="exportLog()">CSVを表示</button><textarea id="out" readonly style="display:none"></textarea></div>`;
+ return h+'</div>';
 }
 function exportLog(){const rows=['学籍番号,氏名,問題ID,正誤,秒,モード,チャレンジ,日時'];DATA.students.forEach(s=>{(store.get('kd_u_'+s.id,{log:[]}).log).forEach(l=>rows.push([s.id,s.name,l.qid,l.ok,l.sec,l.mode,l.chal,new Date(l.ts).toLocaleString('ja-JP')].join(',')))});const o=$('#out');o.style.display='block';o.value=rows.join('\n');o.select()}
 
@@ -673,7 +687,7 @@ function render(){
  else if(s==='cheer')a.innerHTML=cheerView();
  else if(s==='quiz')a.innerHTML=quizView();
  else if(s==='result')a.innerHTML=resultView();
- if(ui.viewAs&&me&&s!=='admin'&&s!=='adminlogin'&&s!=='login')a.insertAdjacentHTML('afterbegin',`<div style="position:sticky;top:0;z-index:30;background:#fff3cd;border-bottom:2px solid #f0c36d;padding:8px 12px;font-size:13px;display:flex;align-items:center;gap:8px"><span>👁 <b>${esc(me.name)}</b>さんの画面（閲覧専用）</span><button class="btn s" style="margin:0;width:auto;padding:6px 10px;font-size:12px;margin-left:auto" onclick="exitView()">先生画面に戻る</button></div>`);
+ if((ui.viewAs||ui.testMode)&&me&&s!=='admin'&&s!=='adminlogin'&&s!=='login')a.insertAdjacentHTML('afterbegin',`<div style="position:sticky;top:0;z-index:30;background:${ui.testMode?'#e3f2fd':'#fff3cd'};border-bottom:2px solid ${ui.testMode?'#90caf9':'#f0c36d'};padding:8px 12px;font-size:13px;display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span>${ui.testMode?'🧪 <b>テスト学生</b>で操作中（この端末だけに保存・本物の記録には影響しません）':'👁 <b>'+esc(me.name)+'</b>さんの画面（閲覧専用）'}</span><span style="margin-left:auto;display:flex;gap:6px">${ui.testMode?'<button class="btn g s" style="margin:0;width:auto;padding:6px 10px;font-size:12px" onclick="resetTest()">最初からやり直す</button>':''}<button class="btn s" style="margin:0;width:auto;padding:6px 10px;font-size:12px" onclick="exitView()">先生画面に戻る</button></span></div>`);
 }
 setInterval(()=>{const e=$('#tm');if(e&&sess&&sess.phase==='ans')e.textContent=Math.round((Date.now()-sess.t0)/1000)+'秒'},500);
 /* ================= クラウド保存（共有データベース） ================= */
@@ -715,7 +729,7 @@ async function pullAllProgress(){
  render();
 }
 let pT=null,pBusy=false;
-function cloudPushU(){if(ui.viewAs)return;if(GAS_URL){if(!me||!GASAUTH)return;clearTimeout(pT);pT=setTimeout(gasPush,3000);return}if(!DB||!UID||!me)return;clearTimeout(pT);pT=setTimeout(doPushU,3000)}
+function cloudPushU(){if(ui.viewAs||ui.testMode)return;if(GAS_URL){if(!me||!GASAUTH)return;clearTimeout(pT);pT=setTimeout(gasPush,3000);return}if(!DB||!UID||!me)return;clearTimeout(pT);pT=setTimeout(doPushU,3000)}
 async function gasPush(){
  if(pBusy||!me||!GASAUTH||!U)return;pBusy=true;
  try{const mins={};const lim=new Date();lim.setDate(lim.getDate()-14);const ls=dstr(lim);[...Object.keys(U.days||{}),...Object.keys(U.focus||{})].forEach(d=>{if(d>=ls)mins[d]=studyMin(d)});
@@ -751,10 +765,11 @@ const CHEER_STAMPS=[['👏','ナイス'],['🔥','その調子'],['💪','ファ
 const CHEER_MAX=5,CHEER_OPEN=5,WEEK_GOAL=2000;
 let CH={feed:[],studying:0,today:0,week:0,sent:0,sentTo:[],inbox:[],ok:false,busy:false,ts:0,res:''};
 const chSet=()=>(U.cheer=U.cheer||{mode:'anon',nick:'',show:false,recv:true,seen:0});
-const chOn=()=>!!GAS_URL;
+const chOn=()=>!!GAS_URL||!!ui.testMode;
 function studyingNow(){if(document.hidden)return false;if(ui.screen==='quiz'||TM)return true;const l=U.log&&U.log.length?U.log[U.log.length-1].ts:0;return Date.now()-l<5*60000}
 function kick(){if(chOn()&&me&&Date.now()-CH.ts>20000)pulse()}
 async function pulse(send){
+ if(ui.testMode&&me){fakePulse(send);return}
  if(ui.viewAs||!chOn()||!me||!GASAUTH||!U)return;
  if(CH.busy){if(send){ui.msg='通信中です。少し待ってからもう一度押してね';render()}return}
  CH.busy=true;const c=chSet(),td=U.days[today()]||{n:0};
@@ -828,7 +843,45 @@ async function viewAs(id){
   me=r.s;U=Object.assign({q:{},log:[],days:{}},r.U||{});ui.viewAs=true;initU();ui.sel=null;ui.cheerSel=null;CH={feed:[],studying:0,today:0,week:0,sent:0,sentTo:[],inbox:[],ok:false,busy:false,ts:0,res:''};go('home')}
  catch(e){ui.msg='学生の画面を開けませんでした（'+(e.message||'通信エラー')+'）。Apps Scriptを新しいバージョンでデプロイしたか確認してください';render()}
 }
-function exitView(){me=null;U=null;sess=null;ui.viewAs=false;ui.msg=null;go('admin')}
+function exitView(){me=null;U=null;sess=null;ui.viewAs=false;ui.testMode=false;ui.tp=null;ui.msg=null;go('admin')}
+
+/* ================= テスト学生（先生用：学生モードの動作確認） ================= */
+const TEST_PAT=[[15,'20%未満','かなり苦手（模試の正答率 約15%）'],[45,'45%','苦手が多い'],[60,'60%前後','平均的'],[80,'80%','得意が多い']];
+function genTest(acc,hist){
+ const R=mulberry(acc*977+7),ars=AR(),bias={};ars.forEach(a=>bias[a]=(R()-.5)*.2);
+ const res={};DATA.qs.forEach(q=>{res[q.id]=R()<Math.max(.02,Math.min(.98,acc/100+(bias[q.area]||0)))?1:0});
+ const s={id:'test-'+acc,sid:'',name:'テスト学生（'+(acc<20?'20%未満':acc+'%')+'）',type:'テスト',res,ext:{}};
+ const u={q:{},log:[],days:{}};
+ if(hist){const now=Date.now();for(let d=13;d>=0;d--){if(R()<.25)continue;const dt=new Date(now-d*864e5),ds=dstr(dt),n=8+Math.floor(R()*18);u.days[ds]={n:0,sec:0};
+   for(let k=0;k<n;k++){const q=DATA.qs[Math.floor(R()*DATA.qs.length)],ok=R()<Math.min(.95,acc/100+.12),sec=30+Math.floor(R()*70);u.days[ds].n++;u.days[ds].sec+=sec;
+    u.log.push({qid:q.id,ok:ok?1:0,sec,mode:'recommend',chal:0,ts:dt.getTime()-k*60000});
+    const t=u.q[q.id]||(u.q[q.id]={streak:0,tries:0,wrong:0});t.tries++;if(ok)t.streak++;else{t.streak=0;t.wrong++}}}}
+ return {s,u};
+}
+function startTest(acc){
+ if(!DATA.qs.length){ui.msg='問題データがありません';render();return}
+ const key='kd_u_test-'+acc;const hist=ui.th!==0;
+ const g=genTest(acc,hist);me=g.s;
+ const saved=store.get(key,null);U=saved?saved:g.u;
+ ui.testMode=true;ui.viewAs=false;ui.tp=acc;initU();store.set(key,U);
+ CH={feed:[],studying:0,today:0,week:0,sent:0,sentTo:[],inbox:[],ok:false,busy:false,ts:0,res:''};go('home');
+}
+function resetTest(){const acc=ui.tp;if(acc==null)return;store.set('kd_u_test-'+acc,null);ui.th=ui.th;const t=ui.testMode;startTest(acc);ui.msg='最初からやり直しました';render()}
+function testAdminCard(){
+ const th=ui.th!==0;
+ return `<div class="card"><h3>🧪 テスト学生で試す</h3><div class="sub">本物の学生と同じように、問題を解いたり、応援ルームを使ったりして、動作を確認できます。記録はこの端末だけに保存され、スプレッドシートには送りません。本物の学生の統計にも混ざりません。</div>
+ <label style="margin-top:10px">学習の履歴</label><div style="display:flex;gap:6px"><button class="btn ${th?'':'g'} s" style="margin:0" onclick="ui.th=1;render()">2週間分あり</button><button class="btn ${th?'g':''} s" style="margin:0" onclick="ui.th=0;render()">なし（初回）</button></div>
+ <label style="margin-top:10px">模試の成績パターン</label>${TEST_PAT.map(x=>{const has=store.get('kd_u_test-'+x[0],null);return `<button class="btn g" onclick="startTest(${x[0]})" style="text-align:left"><b>正答率 ${x[1]}</b>　<span class="sub">${x[2]}${has?'　（続きから）':''}</span></button>`}).join('')}
+ <div class="sub" style="margin-top:6px">パターンを選ぶと、学生のホーム画面が開きます。成績は、いまの問題データから自動で作ります。履歴の設定は、はじめて開くときに使われます。やり直したいときは、画面の上の「最初からやり直す」を押してください。</div></div>`;
+}
+/* テスト中の応援ルーム（架空の仲間・サーバーには送らない） */
+function fakePulse(send){
+ const c=chSet(),td=U.days[today()]||{n:0};
+ if(!CH.fake){CH.fake=[['さくら',12,3],['ゆうと',30,5],['ミミ',0,0],['たろう',45,9],['はなこ',7,1]].map((x,i)=>({id:'d'+i,name:x[0],n:x[1],streak:x[2],r:i===2?0:1,studying:i===1||i===3?1:0}));CH.sentTo=[];CH.sent=0;CH.fin=[{ts:Date.now()-600000,from:'ゆうと',k:1},{ts:Date.now()-3600000,from:'匿名さん',k:2}]}
+ if(send){const M=CH;if(td.n<CHEER_OPEN)ui.msg=`今日${CHEER_OPEN}問解くと、スタンプが送れます`;else if(M.sent>=CHEER_MAX)ui.msg=`今日は${CHEER_MAX}回まで送れます`;else if(M.sentTo.includes(send.to))ui.msg='この人には今日もう送りました';else{M.sent++;M.sentTo.push(send.to);ui.msg='送りました！（テスト）'}}
+ CH.ok=true;CH.ts=Date.now();CH.feed=CH.fake;CH.inbox=CH.fin;CH.studying=CH.fake.filter(x=>x.studying).length+(studyingNow()?1:0);CH.today=CH.fake.reduce((a,x)=>a+x.n,0)+td.n;CH.week=640+weekN();
+ if(ui.screen==='home'||ui.screen==='cheer')render();
+}
 
 loadBank();
 </script>
