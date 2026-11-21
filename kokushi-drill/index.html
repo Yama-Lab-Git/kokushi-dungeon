@@ -164,7 +164,7 @@ const stq=q=>U.q[q.id]||{streak:0,tries:0,wrong:0};
 const mockWrong=q=>me.res[q.id]===0;
 const need=q=>(mockWrong(q)||stq(q).wrong>0)&&stq(q).streak<2;
 const needList=f=>DATA.qs.filter(q=>need(q)&&(!f||f(q))).sort((a,b)=>tier(rate(b))-tier(rate(a))||rate(b)-rate(a));
-const saveU=()=>{store.set('kd_u_'+me.id,U);cloudPushU()};
+const saveU=()=>{if(ui.viewAs)return;store.set('kd_u_'+me.id,U);cloudPushU()};
 function areaStat(a){const qs=DATA.qs.filter(q=>q.area===a&&rate(q)>=60);const rem=qs.filter(need);const w=rem.reduce((s,q)=>s+tier(rate(q)),0);return{total:qs.length,rem:rem.length,w,done:qs.length-rem.length,pct:qs.length?Math.round((qs.length-rem.length)/qs.length*100):100}}
 function mockAcc(ex,area){let n=0,c=0;DATA.qs.forEach(q=>{if((ex==='all'||q.exam===ex)&&(!area||q.area===area)){const r=me.res[q.id];if(r!==undefined){n++;c+=r}}});return{n,c,pct:n?Math.round(c/n*100):null}}
 function appAcc(area,last){const qm=Object.fromEntries(DATA.qs.map(q=>[q.id,q]));let l=U.log.filter(x=>!x.chal&&qm[x.qid]&&qm[x.qid].area===area);if(last)l=l.slice(-last);const c=l.filter(x=>x.ok).length;return{n:l.length,pct:l.length?Math.round(c/l.length*100):null}}
@@ -194,6 +194,7 @@ function go(s){ui.screen=s;if(s!=='login')ui.msg=null;render();window.scrollTo(0
 
 /* ================= 記録 ================= */
 function record(q,ok,sec,mode,chal){
+ if(ui.viewAs)return;
  const t=today();U.days[t]=U.days[t]||{n:0,sec:0};U.days[t].n++;U.days[t].sec+=sec;
  U.log.push({qid:q.id,ok:ok?1:0,sec,mode,chal:chal?1:0,ts:Date.now()});
  if(U.log.length>3000)U.log=U.log.slice(-3000);
@@ -203,6 +204,7 @@ function record(q,ok,sec,mode,chal){
 
 /* ================= 出題セッション ================= */
 function startSession(ids,mode,title,chal){
+ if(ui.viewAs){ui.msg='閲覧専用のため、問題は解けません';render();return}
  if(!ids.length){ui.msg='この条件の問題はありません。条件を変えてみよう。';render();return}
  sess={queue:ids.map(id=>({id,chal:!!chal,rep:0})),i:0,mode,title,correct:0,sec:0,newM:0,wrongIds:[],answered:0};
  resetQ();ui.screen='quiz';render();window.scrollTo(0,0);
@@ -426,7 +428,7 @@ function adminView(){
  const st=allStats();const qm=Object.fromEntries(DATA.qs.map(q=>[q.id,q]));
  let h=`<div class="hero" style="padding-bottom:24px"><h2>🧑‍🏫 学習記録（先生用）</h2><div class="msg">学生ごとの取り組み量・時間</div></div><div class="wrap" style="margin-top:12px">${toast()}<div class="card"><table class="tbl"><tr><th>学生</th><th>問題数</th><th>正答率</th><th>合計</th><th>平均/問</th><th>最終</th></tr>${st.map(x=>`<tr class="cl" onclick="ui.sel='${x.s.id}';render()"><td>${esc(x.s.name)}<br><span class="sub">${esc(x.s.type||x.s.id)}</span></td><td>${x.n}</td><td>${x.n?Math.round(x.ok/x.n*100)+'%':'-'}</td><td>${fmtMin(x.sec)}</td><td>${x.n?Math.round(x.sec/x.n)+'秒':'-'}</td><td>${esc(x.last.slice(5))}</td></tr>`).join('')}</table></div>`;
  if(ui.sel){const x=st.find(y=>y.s.id===ui.sel);if(x){const by={};x.u.log.forEach(l=>{const b=by[l.qid]||(by[l.qid]={n:0,ok:0,sec:0});b.n++;b.ok+=l.ok;b.sec+=l.sec});const rows=Object.entries(by).map(([id,b])=>({id,...b,avg:Math.round(b.sec/b.n)})).sort((a,b)=>b.avg-a.avg).slice(0,15);
-  h+=`<div class="card"><h3>${esc(x.s.name)}さん：問題ごとの時間（長い順）</h3><div class="sub">取り組んだ日数 ${x.days}日／制覇 ${x.mastered}問</div><table class="tbl"><tr><th>問題</th><th>領域</th><th>回数</th><th>正答</th><th>平均秒</th></tr>${rows.map(r=>{const q=qm[r.id];return `<tr><td>${q?esc(examName(q.exam))+' '+esc(q.ses)+q.no:esc(r.id)}</td><td>${q?esc(q.area):''}</td><td>${r.n}</td><td>${r.ok}/${r.n}</td><td>${r.avg}</td></tr>`}).join('')}</table></div>`}}
+  h+=`<div class="card"><h3>${esc(x.s.name)}さん：問題ごとの時間（長い順）</h3><div class="sub">取り組んだ日数 ${x.days}日／制覇 ${x.mastered}問</div><button class="btn b s" onclick="viewAs('${esc(x.s.id)}')">👁 この学生の画面を見る</button><table class="tbl"><tr><th>問題</th><th>領域</th><th>回数</th><th>正答</th><th>平均秒</th></tr>${rows.map(r=>{const q=qm[r.id];return `<tr><td>${q?esc(examName(q.exam))+' '+esc(q.ses)+q.no:esc(r.id)}</td><td>${q?esc(q.area):''}</td><td>${r.n}</td><td>${r.ok}/${r.n}</td><td>${r.avg}</td></tr>`}).join('')}</table></div>`}}
  h+=roomAdminCard();
  h+=cloudCard();
  h+=`<div class="card"><h3>🪪 学籍番号の名簿</h3><div class="sub">「学籍番号 氏名」を1行ずつ貼り付け（タブ・スペース区切り可）。登録済み：${Object.keys(store.get('kd_roster',{})).length}名。成績CSVの学生名と自動で結びつけます。</div><textarea id="rt" rows="5" style="width:100%" placeholder="12345678 国試　太郎"></textarea><button class="btn" onclick="doRoster()">名簿を登録</button></div>`;
@@ -671,6 +673,7 @@ function render(){
  else if(s==='cheer')a.innerHTML=cheerView();
  else if(s==='quiz')a.innerHTML=quizView();
  else if(s==='result')a.innerHTML=resultView();
+ if(ui.viewAs&&me&&s!=='admin'&&s!=='adminlogin'&&s!=='login')a.insertAdjacentHTML('afterbegin',`<div style="position:sticky;top:0;z-index:30;background:#fff3cd;border-bottom:2px solid #f0c36d;padding:8px 12px;font-size:13px;display:flex;align-items:center;gap:8px"><span>👁 <b>${esc(me.name)}</b>さんの画面（閲覧専用）</span><button class="btn s" style="margin:0;width:auto;padding:6px 10px;font-size:12px;margin-left:auto" onclick="exitView()">先生画面に戻る</button></div>`);
 }
 setInterval(()=>{const e=$('#tm');if(e&&sess&&sess.phase==='ans')e.textContent=Math.round((Date.now()-sess.t0)/1000)+'秒'},500);
 /* ================= クラウド保存（共有データベース） ================= */
@@ -712,7 +715,7 @@ async function pullAllProgress(){
  render();
 }
 let pT=null,pBusy=false;
-function cloudPushU(){if(GAS_URL){if(!me||!GASAUTH)return;clearTimeout(pT);pT=setTimeout(gasPush,3000);return}if(!DB||!UID||!me)return;clearTimeout(pT);pT=setTimeout(doPushU,3000)}
+function cloudPushU(){if(ui.viewAs)return;if(GAS_URL){if(!me||!GASAUTH)return;clearTimeout(pT);pT=setTimeout(gasPush,3000);return}if(!DB||!UID||!me)return;clearTimeout(pT);pT=setTimeout(doPushU,3000)}
 async function gasPush(){
  if(pBusy||!me||!GASAUTH||!U)return;pBusy=true;
  try{const mins={};const lim=new Date();lim.setDate(lim.getDate()-14);const ls=dstr(lim);[...Object.keys(U.days||{}),...Object.keys(U.focus||{})].forEach(d=>{if(d>=ls)mins[d]=studyMin(d)});
@@ -752,7 +755,7 @@ const chOn=()=>!!GAS_URL;
 function studyingNow(){if(document.hidden)return false;if(ui.screen==='quiz'||TM)return true;const l=U.log&&U.log.length?U.log[U.log.length-1].ts:0;return Date.now()-l<5*60000}
 function kick(){if(chOn()&&me&&Date.now()-CH.ts>20000)pulse()}
 async function pulse(send){
- if(!chOn()||!me||!GASAUTH||!U)return;
+ if(ui.viewAs||!chOn()||!me||!GASAUTH||!U)return;
  if(CH.busy){if(send){ui.msg='通信中です。少し待ってからもう一度押してね';render()}return}
  CH.busy=true;const c=chSet(),td=U.days[today()]||{n:0};
  try{const r=await gas({a:'pulse',sid:GASAUTH.sid,name:GASAUTH.name,mode:c.mode,nick:c.nick,show:!!c.show,recv:c.recv!==false,n:td.n,nw:weekN(),streak:streakDays(),studying:studyingNow(),send:send||null});
@@ -768,7 +771,7 @@ function cheerHomeCard(){
  if(!chOn())return '';const n=chUnseen();const td=U.days[today()]||{n:0};
  return `<div class="card" onclick="go('cheer')" style="cursor:pointer"><h3>🙌 応援ルーム <span class="sub" style="margin-left:auto">開く ›</span></h3><div><span class="live"></span>いま <b>${CH.ok?CH.studying:'-'}</b>人が勉強中　／　今週のクラス合計 <b>${CH.ok?CH.week:'-'}</b>問</div>${n?`<div style="margin-top:6px;font-weight:700;color:var(--pri)">💌 ${n}件の応援が届いています</div>`:''}<div class="sub" style="margin-top:4px">${td.n>=CHEER_OPEN?'今日はスタンプが送れます':`あと${CHEER_OPEN-td.n}問解くと、スタンプが送れます`}</div></div>`;
 }
-function setCh(k,v){const c=chSet();c[k]=v;saveU();pulse();render()}
+function setCh(k,v){if(ui.viewAs)return;const c=chSet();c[k]=v;saveU();pulse();render()}
 function sendStamp(id,k){const td=U.days[today()]||{n:0};if(td.n<CHEER_OPEN){ui.msg=`今日${CHEER_OPEN}問解くと、スタンプが送れます（あと${CHEER_OPEN-td.n}問）`;render();return}if(CH.sent>=CHEER_MAX){ui.msg=`今日は${CHEER_MAX}回まで送れます`;render();return}ui.cheerSel=null;pulse({to:id,stamp:k})}
 function selCheer(id){ui.cheerSel=ui.cheerSel===id?null:id;render()}
 function cheerView(){
@@ -815,9 +818,17 @@ function roomAdminCard(){
  const used=L.filter(x=>x.used).length,stu=L.filter(x=>x.studying).length,td=L.reduce((s,x)=>s+x.n,0),wk=L.reduce((s,x)=>s+x.nw,0),vis=L.filter(x=>x.show).length;
  h+=`<div class="grid3" style="margin-top:10px"><div class="stat"><b>${stu}</b><span class="sub">いま勉強中</span></div><div class="stat"><b>${used}/${L.length}</b><span class="sub">応援ルーム利用</span></div><div class="stat"><b>${td}</b><span class="sub">今日の合計(問)</span></div></div><div class="sub" style="margin-top:6px">今週の合計 ${wk}問　／　一覧に公開している学生 ${vis}名</div>`;
  h+=`<div style="display:flex;gap:6px;margin:8px 0">${[['old','最終勉強が古い順'],['today','今日の問題数'],['week','今週の問題数']].map(x=>`<button class="btn ${k===x[0]?'':'g'} s" style="margin:0;padding:8px 4px;font-size:12px" onclick="setRmSort('${x[0]}')">${x[1]}</button>`).join('')}</div>`;
- h+=`<table class="tbl"><tr><th>学生</th><th>今日</th><th>今週</th><th>連続</th><th>最終勉強</th></tr>${L.map(x=>`<tr><td>${x.studying?'<span class="live"></span>':''}${esc(x.name)}<br><span class="sub">${x.used?`表示：${esc(x.disp)}${x.show?'（公開）':'（非公開）'}${x.recv?'':'・受取オフ'}${x.hidden?'・制限中':''}`:'未使用'}${x.used?`<br>送${x.sent}／受${x.recvN}`:''}</span>${x.used&&x.disp&&x.disp!=='匿名さん'&&x.mode!=='real'?` <a href="#" onclick="hideNick('${esc(x.id)}',true);return false" class="sub">匿名にする</a>`:''}${x.hidden?` <a href="#" onclick="hideNick('${esc(x.id)}',false);return false" class="sub">制限を解除</a>`:''}</td><td>${x.n}</td><td>${x.nw}</td><td>${x.streak||0}日</td><td>${ago(x.lastStudy||x.lastPush)}</td></tr>`).join('')}</table></div>`;
+ h+=`<table class="tbl"><tr><th>学生</th><th>今日</th><th>今週</th><th>連続</th><th>最終勉強</th></tr>${L.map(x=>`<tr><td>${x.studying?'<span class="live"></span>':''}${esc(x.name)}<br><span class="sub">${x.used?`表示：${esc(x.disp)}${x.show?'（公開）':'（非公開）'}${x.recv?'':'・受取オフ'}${x.hidden?'・制限中':''}`:'未使用'}${x.used?`<br>送${x.sent}／受${x.recvN}`:''}</span>${x.used&&x.disp&&x.disp!=='匿名さん'&&x.mode!=='real'?` <a href="#" onclick="hideNick('${esc(x.id)}',true);return false" class="sub">匿名にする</a>`:''}<br><a href="#" onclick="viewAs('${esc(x.id)}');return false" class="sub">👁 画面を見る</a>${x.hidden?` <a href="#" onclick="hideNick('${esc(x.id)}',false);return false" class="sub">制限を解除</a>`:''}</td><td>${x.n}</td><td>${x.nw}</td><td>${x.streak||0}日</td><td>${ago(x.lastStudy||x.lastPush)}</td></tr>`).join('')}</table></div>`;
  return h;
 }
+
+async function viewAs(id){
+ if(!GAS_URL){const s=DATA.students.find(x=>x.id===id);if(!s){ui.msg='学生データがありません';render();return}me=s;U=JSON.parse(JSON.stringify(store.get('kd_u_'+id,{q:{},log:[],days:{}})));ui.viewAs=true;initU();CH={feed:[],studying:0,today:0,week:0,sent:0,sentTo:[],inbox:[],ok:false,busy:false,ts:0,res:''};go('home');return}
+ try{const r=await gas({a:'adminStudent',pw:ADMINPW,id});if(!r.ok)throw new Error(r.error||'error');
+  me=r.s;U=Object.assign({q:{},log:[],days:{}},r.U||{});ui.viewAs=true;initU();ui.sel=null;ui.cheerSel=null;CH={feed:[],studying:0,today:0,week:0,sent:0,sentTo:[],inbox:[],ok:false,busy:false,ts:0,res:''};go('home')}
+ catch(e){ui.msg='学生の画面を開けませんでした（'+(e.message||'通信エラー')+'）。Apps Scriptを新しいバージョンでデプロイしたか確認してください';render()}
+}
+function exitView(){me=null;U=null;sess=null;ui.viewAs=false;ui.msg=null;go('admin')}
 
 loadBank();
 </script>
