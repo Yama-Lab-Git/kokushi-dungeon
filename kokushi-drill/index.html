@@ -31,6 +31,7 @@ h1,h2,h3{margin:0}
 .stat b{display:block;font-size:20px}
 .bar{height:10px;background:#e8edf5;border-radius:6px;overflow:hidden}
 .bar i{display:block;height:100%;border-radius:6px;background:linear-gradient(90deg,var(--pri2),var(--pri));transition:width .5s}
+.tk{position:absolute;top:-3px;height:16px;width:3px;margin-left:-1px;background:#1d2433;border-radius:2px}
 .bar.g i{background:linear-gradient(90deg,#5ad1a0,var(--ok))}
 .bar.bl i{background:linear-gradient(90deg,#7fa0ff,var(--blue))}
 .line{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line)}
@@ -384,18 +385,51 @@ function menuView(){
 // selectの値は文字列で返るため prac を真偽値へ変換
 const _setF=setF;setF=function(k,v){if(k==='prac')v=(v==='true');_setF(k,v)};
 
+
+/* ===== 模試分析：学内平均との比較 ===== */
+function grp(ex,pred){let n=0,c=0,cs=0,cn=0,ns=0,nn=0;DATA.qs.forEach(q=>{if((ex==='all'||q.exam===ex)&&pred(q)){const r=me.res[q.id];if(r!==undefined){n++;c+=r;if(q.cls!=null){cs+=q.cls;cn++}if(q.nat>0){ns+=q.nat;nn++}}}});return{n,c,pct:n?Math.round(c/n*100):null,cls:cn?Math.round(cs/cn):null,nat:nn?Math.round(ns/nn):null}}
+const dfx=(a,b)=>a==null||b==null?'':`<span style="font-weight:700;color:${a-b>=0?'var(--ok)':'var(--ng)'}">${a-b>=0?'+':''}${a-b}</span>`;
+function cmpBar(p,t,cls){return `<div style="position:relative;margin-top:4px"><div class="bar ${cls||'bl'}"><i style="width:${p||0}%"></i></div>${t!=null?`<u class="tk" style="left:${t}%"></u>`:''}</div>`}
+function cmpRow(label,g,ind){if(!g.n)return '';return `<div style="margin-top:12px;${ind?'margin-left:14px':''}"><div style="display:flex;justify-content:space-between;align-items:baseline;font-size:${ind?13:14}px;font-weight:600"><span>${esc(label)}</span><span>${g.pct}% ${dfx(g.pct,g.cls)}</span></div>${cmpBar(g.pct,g.cls)}<div class="sub" style="font-size:11px;margin-top:2px">${g.cls!=null?'学内平均 '+g.cls+'%':''}${g.nat!=null?'　全国 '+g.nat+'%':''}　（${g.c}/${g.n}問）</div></div>`}
+function examPoints(){
+ const P=[];
+ DATA.exams.forEach(e=>{const g=grp(e.id,()=>true);if(g.n){const m=/(\d{2})(\d{2})$/.exec(e.id)||[];P.push({k:(+m[1]||0)*100+(+m[2]||0),l:(+m[1]||'')+'/'+(+m[2]||''),me:g.pct,cls:g.cls,nat:g.nat})}});
+ Object.entries(me.ext||{}).forEach(([xid,x])=>{const m=/(\d+)\s*[\/月]\s*(\d+)/.exec(x.name||'');if(!x.n)return;const all=DATA.students.map(z=>(z.ext||{})[xid]).filter(Boolean);const av=all.length>1?Math.round(all.reduce((a,z)=>a+z.c/z.n,0)/all.length*100):null;P.push({k:m?(+m[1])*100+(+m[2]):999,l:m?(+m[1])+'/'+(+m[2]):esc(x.name),me:Math.round(x.c/x.n*100),cls:av,nat:null})});
+ return P.sort((a,b)=>a.k-b.k);
+}
+function trendCard(){
+ const P=examPoints();if(!P.length)return '';
+ const W=320,H=170,x0=34,x1=306,y0=14,y1=134,X=i=>P.length===1?(x0+x1)/2:x0+(x1-x0)*i/(P.length-1),Y=v=>y1-(y1-y0)*v/100;
+ let g=[0,20,40,60,80,100].map(v=>`<line x1="${x0}" x2="${x1}" y1="${Y(v)}" y2="${Y(v)}" stroke="${v===60?'#f0a35e':'#e6eaf2'}" stroke-width="1" ${v===60?'stroke-dasharray="4 3"':''}/><text x="${x0-5}" y="${Y(v)+3}" font-size="9" text-anchor="end" fill="#667085">${v}</text>`).join('');
+ const line=(k,col,dash)=>{const pts=P.map((q,i)=>q[k]==null?null:[X(i),Y(q[k])]).filter(Boolean);return pts.length>1?`<polyline points="${pts.map(a=>a.join(',')).join(' ')}" fill="none" stroke="${col}" stroke-width="2" ${dash?'stroke-dasharray="5 4"':''}/>`:''};
+ const dots=(k,col,lab)=>P.map((q,i)=>q[k]==null?'':`<circle cx="${X(i)}" cy="${Y(q[k])}" r="${lab?4:3}" fill="${col}"/>${lab?`<text x="${X(i)}" y="${Y(q[k])-8}" font-size="10" font-weight="700" text-anchor="middle" fill="${col}">${q[k]}</text>`:''}`).join('');
+ const xl=P.map((q,i)=>`<text x="${X(i)}" y="${y1+16}" font-size="10" text-anchor="middle" fill="#667085">${q.l}</text>`).join('');
+ return `<div class="card"><h3>📈 得点率の推移</h3><div class="sub">模試ごとの得点率（％）。<span style="color:var(--blue);font-weight:700">●青＝あなた</span>／<span style="color:#8a94a6;font-weight:700">●灰＝学内平均</span>／橙の点線＝60%</div><svg viewBox="0 0 ${W} ${H}" style="width:100%;margin-top:6px">${g}${line('cls','#8a94a6',1)}${line('me','#3b6cf6')}${dots('cls','#8a94a6')}${dots('me','#3b6cf6',1)}${xl}</svg><table class="tbl"><tr><th>模試</th><th>あなた</th><th>学内平均</th><th>差</th></tr>${P.map(q=>`<tr><td>${q.l}</td><td>${q.me}%</td><td>${q.cls==null?'-':q.cls+'%'}</td><td>${dfx(q.me,q.cls)||'-'}</td></tr>`).join('')}</table></div>`;
+}
+function posCard(ex){
+ const base=['解剖学','生理学','運動学'],jis=q=>q.no<=20,isb=q=>base.includes(q.area);
+ const t=grp(ex,()=>true);if(!t.n)return '';
+ let h=`<div class="card"><h3>🧭 全体の中の立ち位置</h3><div class="sub">黒い線＝学内平均。棒が線より右なら、学内平均より高い得点率です。</div>`;
+ h+=cmpRow('総合',t);
+ h+=cmpRow('実地問題（各模試1〜20番・計40問）',grp(ex,jis));
+ h+=cmpRow('一般問題',grp(ex,q=>!jis(q)));
+ h+=cmpRow('基礎3科目（解剖学・生理学・運動学）',grp(ex,isb));
+ base.forEach(a=>{h+=cmpRow(a,grp(ex,q=>q.area===a),1)});
+ return h+'</div>';
+}
 function analysisView(){
  const ex=ui.ex,ar=AR();
  const tot=mockAcc(ex);
  const qs=DATA.qs.filter(q=>(ex==='all'||q.exam===ex)&&me.res[q.id]!==undefined);
- const avg=qs.length?Math.round(qs.reduce((s,q)=>s+rate(q),0)/qs.length):null;
+ const gt=grp(ex,()=>true),avg=gt.cls;
  const miss=qs.filter(q=>me.res[q.id]===0&&rate(q)>=60).sort((a,b)=>rate(b)-rate(a));
  const cnt=[3,2,1].map(t=>miss.filter(q=>tier(rate(q))===t).length);
  let h=`<div class="hero" style="padding-bottom:24px"><h2>📊 模試分析</h2><div class="msg">${esc(me.name)}さんの模試の結果</div></div><div class="wrap" style="margin-top:12px">`;
  h+=`<div class="seg">${[['all','全体'],...DATA.exams.map(e=>[e.id,e.name])].map(e=>`<button class="${ex===e[0]?'on':''}" onclick="ui.ex='${e[0]}';render()">${esc(e[1])}</button>`).join('')}</div>`;
- h+=`<div class="card"><div class="grid3"><div class="stat"><b>${tot.pct===null?'-':tot.pct+'%'}</b><span class="sub">あなた</span></div><div class="stat"><b>${avg===null?'-':avg+'%'}</b><span class="sub">全体平均</span></div><div class="stat"><b>${tot.pct===null||avg===null?'-':(tot.pct-avg>=0?'+':'')+(tot.pct-avg)}</b><span class="sub">平均との差</span></div></div><div class="sub" style="margin-top:6px">${tot.c}/${tot.n}問正解</div></div>`;
- h+=`<div class="card"><h3>分野別 正答率</h3><div class="sub">スマホで見やすい棒グラフ（青＝模試、橙＝アプリでの正答率）</div>`;
- h+=ar.map(a=>{const m=mockAcc(ex,a),p=appAcc(a);if(!m.n)return '';return `<div style="margin-top:10px"><div style="display:flex;justify-content:space-between;font-size:13px;font-weight:600"><span>${esc(a)}</span><span>模試 ${m.pct}%${p.n?' ／ アプリ '+p.pct+'%':''}</span></div><div class="bar bl" style="margin-top:3px"><i style="width:${m.pct}%"></i></div>${p.n?`<div class="bar" style="margin-top:3px;height:6px"><i style="width:${p.pct}%"></i></div>`:''}</div>`}).join('');
+ h+=`<div class="card"><div class="grid3"><div class="stat"><b>${tot.pct===null?'-':tot.pct+'%'}</b><span class="sub">あなた</span></div><div class="stat"><b>${avg===null?'-':avg+'%'}</b><span class="sub">学内平均</span></div><div class="stat"><b>${tot.pct===null||avg===null?'-':(tot.pct-avg>=0?'+':'')+(tot.pct-avg)}</b><span class="sub">平均との差</span></div></div><div class="sub" style="margin-top:6px">${tot.c}/${tot.n}問正解${gt.nat!=null?'・全国平均 '+gt.nat+'%':''}</div></div>`;
+ h+=trendCard();h+=posCard(ex);
+ h+=`<div class="card"><h3>分野別 正答率</h3><div class="sub">青＝模試、橙＝アプリでの正答率、黒い線＝学内平均</div>`;
+ h+=ar.map(a=>{const m=mockAcc(ex,a),p=appAcc(a),g=grp(ex,q=>q.area===a);if(!m.n)return '';return `<div style="margin-top:10px"><div style="display:flex;justify-content:space-between;font-size:13px;font-weight:600"><span>${esc(a)}</span><span>模試 ${m.pct}%${g.cls!=null?'（学内 '+g.cls+'%）':''}${p.n?' ／ アプリ '+p.pct+'%':''}</span></div>${cmpBar(m.pct,g.cls)}${p.n?`<div class="bar" style="margin-top:3px;height:6px"><i style="width:${p.pct}%"></i></div>`:''}</div>`}).join('');
  h+='</div>';
  h+=`<div class="card"><h3>🎯 取りこぼし（学内・全国どちらかの正答率60%以上で不正解）</h3><div class="grid3"><div class="stat">${tb(3)}<b>${cnt[0]}</b>問</div><div class="stat">${tb(2)}<b>${cnt[1]}</b>問</div><div class="stat">${tb(1)}<b>${cnt[2]}</b>問</div></div>`;
  h+=miss.length?`<div style="margin-top:8px">${miss.map(q=>`<div class="line"><div class="nm" style="width:auto;flex:1">${esc(examName(q.exam))} ${esc(q.ses)}${q.no}<br><span class="sub">${esc(q.area)}</span></div><div class="pc" style="width:auto">${rate(q)}% ${tb(tier(rate(q)))}</div></div>`).join('')}</div>`:'<div class="fb ok" style="margin-top:10px">取りこぼしなし！すばらしい！</div>';
