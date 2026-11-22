@@ -4,6 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>国試ドリル｜理学療法士国家試験</title>
+<link rel="manifest" href="app.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icons/favicon.png">
+<meta name="theme-color" content="#ff6b35">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="国試ドリル">
 <style>
 :root{--bg:#f4f6fb;--card:#fff;--ink:#1d2433;--sub:#667085;--pri:#ff6b35;--pri2:#ffa41c;--ok:#12a36b;--okbg:#e6f7ef;--ng:#e5484d;--ngbg:#fdeceb;--blue:#3b6cf6;--line:#e6eaf2}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -106,8 +113,8 @@ body.tm #app{padding-top:44px}
 <script>
 /* ================= 設定 ================= */
 const EXAM_DATE='2027-02-21';      // 国家試験日
-const ADMIN_PW='';           // 先生用パスワード（運用時に変更）
-const GAS_URL='https://script.google.com/macros/s/AKfycbxtpKGp293BGR3wJxWOZx_jz4HsKpE_LYgqDI4BKUCkdGooS_Y51qFYuHoGjrtpjassVA/exec';                   // Google Apps ScriptのURLを入れると学習記録を先生用シートに送信
+const ADMIN_PW='';           // 教員用パスワード（運用時に変更）
+const GAS_URL='https://script.google.com/macros/s/AKfycbxtpKGp293BGR3wJxWOZx_jz4HsKpE_LYgqDI4BKUCkdGooS_Y51qFYuHoGjrtpjassVA/exec';                   // Google Apps ScriptのURLを入れると学習記録を教員用シートに送信
 let AREA_ORDER=['解剖学','生理学','運動学','内部障害','神経系','運動器','発達','精神・心理','評価'];
 
 /* ================= サンプルデータ（本番はadminで差し替え） ================= */
@@ -338,7 +345,7 @@ const toast=()=>ui.msg?`<div class="toast">${esc(ui.msg)}</div>`:'';
 function bars(rows,cls){return rows.map(r=>`<div class="line"><div class="nm">${esc(r.n)}</div><div class="bw"><div class="bar ${cls||''}"><i style="width:${r.p}%"></i></div></div><div class="pc">${r.t}</div></div>`).join('')}
 
 function loginView(){
- return `<div class="login"><div class="big">🦴</div><h1>国試ドリル</h1><p class="sub" style="text-align:center">理学療法士国家試験　あなた専用のドリル</p><div class="card"><label>学籍番号</label><input id="sid" inputmode="numeric" autocomplete="off" placeholder="例）12345678"><label>名前</label><input id="nm" autocomplete="off" placeholder="例）国試 太郎"><button class="btn" onclick="login()">はじめる</button>${ui.msg?`<div class="fb ng">${esc(ui.msg)}</div>`:''}</div>${BANK?"":`<p class="sub" style="text-align:center">デモ：1001 山田花子 ／ 1002 佐藤健 ／ 1003 鈴木愛</p>`}<p style="text-align:center"><a href="#" class="sub" onclick="go('adminlogin');return false">先生用</a></p></div>`;
+ return `<div class="login"><img src="icons/icon-192.png" alt="" style="width:92px;height:92px;border-radius:22px;box-shadow:0 6px 18px rgba(242,72,31,.35)"><h1>国試ドリル</h1><p class="sub" style="text-align:center">理学療法士国家試験　あなた専用のドリル</p><div class="card"><label>学籍番号</label><input id="sid" inputmode="numeric" autocomplete="off" placeholder="例）12345678"><label>名前</label><input id="nm" autocomplete="off" placeholder="例）国試 太郎"><button class="btn" onclick="login()">はじめる</button>${ui.msg?`<div class="fb ng">${esc(ui.msg)}</div>`:''}</div>${BANK?"":`<p class="sub" style="text-align:center">デモ：1001 山田花子 ／ 1002 佐藤健 ／ 1003 鈴木愛</p>`}<p style="text-align:center"><a href="#" class="sub" onclick="go('adminlogin');return false">教員用</a></p></div>`;
 }
 function homeView(){
  const days=Math.ceil((new Date(EXAM_DATE+'T00:00:00')-new Date(today()+'T00:00:00'))/864e5);
@@ -451,8 +458,8 @@ function recordsView(){
  <button class="btn g" onclick="logout()">ログアウト</button></div>`+nav('records');
 }
 
-/* ================= 先生用 ================= */
-function adminLoginView(){return `<div class="login"><h1>🔒 先生用</h1><div class="card"><label>パスワード</label><input id="pw" type="password"><button class="btn" onclick="adminLogin()">ひらく</button>${ui.msg?`<div class="fb ng">${esc(ui.msg)}</div>`:''}<button class="btn g" onclick="go('login')">戻る</button></div></div>`}
+/* ================= 教員用 ================= */
+function adminLoginView(){return `<div class="login"><h1>🔒 教員用</h1><div class="card"><label>パスワード</label><input id="pw" type="password"><button class="btn" onclick="adminLogin()">ひらく</button>${ui.msg?`<div class="fb ng">${esc(ui.msg)}</div>`:''}<button class="btn g" onclick="go('login')">戻る</button></div></div>`}
 let ADMINPW='';
 async function adminLogin(){const pw=$('#pw').value;
  if(GAS_URL){try{const r=await gas({a:'checkAdmin',pw});if(r.ok){ADMINPW=pw;ui.admin=true;ui.msg=null;go('admin')}else{ui.msg='パスワードが違います';render()}}catch(e){ui.msg='サーバーに接続できません';render()}return}
@@ -462,7 +469,7 @@ const ADM_MENU=[['status','👥','学生の状況','勉強の記録・学生の�
 function setAm(k){ui.am=k;ui.sel=null;ui.msg=null;render();window.scrollTo(0,0)}
 function adminView(){
  const st=allStats();const qm=Object.fromEntries(DATA.qs.map(q=>[q.id,q]));const am=ui.am||null;
- const ttl=am?(ADM_MENU.find(x=>x[0]===am)||['','','先生用'])[2]:'先生用メニュー';
+ const ttl=am?(ADM_MENU.find(x=>x[0]===am)||['','','教員用'])[2]:'教員用メニュー';
  let h=`<div class="hero" style="padding-bottom:24px"><h2>🧑‍🏫 ${ttl}</h2><div class="msg">${am?'':'見たい項目を選んでください'}</div></div><div class="wrap" style="margin-top:12px">${toast()}`;
  if(!am){
   h+=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">${ADM_MENU.map(x=>`<button class="card" style="text-align:left;cursor:pointer;font-family:inherit;border:1.5px solid var(--line);margin:0" onclick="setAm('${x[0]}')"><div style="font-size:28px">${x[1]}</div><div style="font-weight:700;margin-top:4px">${x[2]}</div><div class="sub">${x[3]}</div></button>`).join('')}</div><button class="btn g" style="margin-top:14px" onclick="logout()">終了</button></div>`;
@@ -849,7 +856,7 @@ function cheerView(){
  return h+'</div>'+nav('cheer');
 }
 
-/* ================= 先生用：勉強状況と応援ルーム ================= */
+/* ================= 教員用：勉強状況と応援ルーム ================= */
 async function pullRoom(){
  if(!GAS_URL){ui.msg='この機能は公開版（GitHub Pages）で使えます';render();return}
  try{const r=await gas({a:'adminRoom',pw:ADMINPW});if(!r.ok)throw new Error(r.error||'error');ui.room=r;ui.msg='勉強状況を更新しました（'+r.list.length+'名）'}catch(e){ui.msg='取得に失敗しました（'+(e.message||'通信エラー')+'）。Apps Scriptを新しいバージョンでデプロイしたか確認してください'}render();
@@ -879,7 +886,7 @@ async function viewAs(id){
 }
 function exitView(){me=null;U=null;sess=null;ui.viewAs=false;ui.testMode=false;ui.tp=null;ui.msg=null;go('admin')}
 
-/* ================= テスト学生（先生用：学生モードの動作確認） ================= */
+/* ================= テスト学生（教員用：学生モードの動作確認） ================= */
 const TEST_PAT=[[15,'20%未満','かなり苦手（模試の正答率 約15%）'],[45,'45%','苦手が多い'],[60,'60%前後','平均的'],[80,'80%','得意が多い']];
 function genTest(acc,hist){
  const R=mulberry(acc*977+7),ars=AR(),bias={};ars.forEach(a=>bias[a]=(R()-.5)*.2);
