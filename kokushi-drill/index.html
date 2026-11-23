@@ -466,7 +466,7 @@ async function adminLogin(){const pw=$('#pw').value;
  if(pw===ADMIN_PW){ui.admin=true;ui.msg=null;go('admin')}else{ui.msg='パスワードが違います';render()}}
 function allStats(){return DATA.students.map(s=>{const u=store.get('kd_u_'+s.id,{q:{},log:[],days:{}});const l=u.log.filter(x=>!x.chal);const sec=u.log.reduce((a,x)=>a+x.sec,0);const dk=Object.keys(u.days).sort();return{s,u,n:u.log.length,ok:u.log.filter(x=>x.ok).length,sec,days:dk.length,last:dk[dk.length-1]||'-',mastered:Object.values(u.q).filter(x=>x.streak>=2).length}})}
 const ADM_MENU=[['status','👥','学生の状況','勉強の記録・学生の画面を見る'],['room','🙌','応援ルーム管理','勉強中・表示名の管理'],['test','🧪','テスト学生で試す','学生モードの動作確認'],['register','📥','模試・名簿の登録','名簿・成績CSVの取り込み'],['cloud','☁️','クラウド保存','保存状態・登録状況'],['export','📤','記録の書き出し','CSV出力']];
-function setAm(k){ui.am=k;ui.sel=null;ui.msg=null;render();window.scrollTo(0,0)}
+function setAm(k){ui.am=k;ui.sel=null;ui.msg=null;render();window.scrollTo(0,0);if((k==='status'||k==='room')&&GAS_URL&&Date.now()-(ui.roomTs||0)>60000)pullRoom(true)}
 function adminView(){
  const st=allStats();const qm=Object.fromEntries(DATA.qs.map(q=>[q.id,q]));const am=ui.am||null;
  const ttl=am?(ADM_MENU.find(x=>x[0]===am)||['','','教員用'])[2]:'教員用メニュー';
@@ -477,11 +477,12 @@ function adminView(){
  }
  h+=`<button class="btn g s" style="margin-bottom:8px" onclick="setAm(null)">← メニューに戻る</button>`;
  if(am==='status'){
-  h+=`<div class="card"><table class="tbl"><tr><th>学生</th><th>問題数</th><th>正答率</th><th>合計</th><th>平均/問</th><th>最終</th></tr>${st.map(x=>`<tr class="cl" onclick="ui.sel='${x.s.id}';render()"><td>${esc(x.s.name)}<br><span class="sub">${esc(x.s.type||x.s.id)}</span></td><td>${x.n}</td><td>${x.n?Math.round(x.ok/x.n*100)+'%':'-'}</td><td>${fmtMin(x.sec)}</td><td>${x.n?Math.round(x.sec/x.n)+'秒':'-'}</td><td>${esc(x.last.slice(5))}</td></tr>`).join('')}</table></div>`;
+  h+=roomAdminCard('status');
+  h+=`<details class="card"><summary style="font-weight:700;cursor:pointer">📋 学習記録の詳細（問題ごとの時間・制覇）</summary><div class="sub" style="margin-top:6px">この端末に名簿がある学生だけ表示されます。学生の行を押すと、問題ごとの時間が出ます。</div><table class="tbl"><tr><th>学生</th><th>問題数</th><th>正答率</th><th>合計</th><th>平均/問</th><th>最終</th></tr>${st.map(x=>`<tr class="cl" onclick="ui.sel='${x.s.id}';render()"><td>${esc(x.s.name)}<br><span class="sub">${esc(x.s.type||x.s.id)}</span></td><td>${x.n}</td><td>${x.n?Math.round(x.ok/x.n*100)+'%':'-'}</td><td>${fmtMin(x.sec)}</td><td>${x.n?Math.round(x.sec/x.n)+'秒':'-'}</td><td>${esc(x.last.slice(5))}</td></tr>`).join('')}</table></details>`;
  if(ui.sel){const x=st.find(y=>y.s.id===ui.sel);if(x){const by={};x.u.log.forEach(l=>{const b=by[l.qid]||(by[l.qid]={n:0,ok:0,sec:0});b.n++;b.ok+=l.ok;b.sec+=l.sec});const rows=Object.entries(by).map(([id,b])=>({id,...b,avg:Math.round(b.sec/b.n)})).sort((a,b)=>b.avg-a.avg).slice(0,15);
   h+=`<div class="card"><h3>${esc(x.s.name)}さん：問題ごとの時間（長い順）</h3><div class="sub">取り組んだ日数 ${x.days}日／制覇 ${x.mastered}問</div><button class="btn b s" onclick="viewAs('${esc(x.s.id)}')">👁 この学生の画面を見る</button><table class="tbl"><tr><th>問題</th><th>領域</th><th>回数</th><th>正答</th><th>平均秒</th></tr>${rows.map(r=>{const q=qm[r.id];return `<tr><td>${q?esc(examName(q.exam))+' '+esc(q.ses)+q.no:esc(r.id)}</td><td>${q?esc(q.area):''}</td><td>${r.n}</td><td>${r.ok}/${r.n}</td><td>${r.avg}</td></tr>`}).join('')}</table></div>`}}
  }
- if(am==='room')h+=roomAdminCard();
+ if(am==='room')h+=roomAdminCard('room');
  if(am==='test')h+=testAdminCard();
  if(am==='cloud')h+=cloudCard();
  if(am==='register'){
@@ -857,24 +858,31 @@ function cheerView(){
 }
 
 /* ================= 教員用：勉強状況と応援ルーム ================= */
-async function pullRoom(){
- if(!GAS_URL){ui.msg='この機能は公開版（GitHub Pages）で使えます';render();return}
- try{const r=await gas({a:'adminRoom',pw:ADMINPW});if(!r.ok)throw new Error(r.error||'error');ui.room=r;ui.msg='勉強状況を更新しました（'+r.list.length+'名）'}catch(e){ui.msg='取得に失敗しました（'+(e.message||'通信エラー')+'）。Apps Scriptを新しいバージョンでデプロイしたか確認してください'}render();
+async function pullRoom(quiet){
+ if(!GAS_URL){if(!quiet){ui.msg='この機能は公開版（GitHub Pages）で使えます';render()}return}
+ try{const r=await gas({a:'adminRoom',pw:ADMINPW});if(!r.ok)throw new Error(r.error||'error');ui.room=r;ui.roomTs=Date.now();if(!quiet)ui.msg='最新の状況に更新しました（'+r.list.length+'名）'}catch(e){ui.msg='取得に失敗しました（'+(e.message||'通信エラー')+'）。Apps Scriptを新しいバージョンでデプロイしたか確認してください'}render();
 }
 async function hideNick(id,hide){
  try{const r=await gas({a:'adminNick',pw:ADMINPW,id,hide});if(!r.ok)throw new Error(r.error);ui.msg=hide?'表示名を「匿名さん」にしました':'表示名の制限を解除しました';await pullRoom()}catch(e){ui.msg='変更できませんでした（'+(e.message||'通信エラー')+'）';render()}
 }
 function setRmSort(k){ui.rmSort=k;render()}
 const ago=ms=>{if(!ms)return '-';const m=Math.round((Date.now()-ms)/60000);if(m<1)return 'いま';if(m<60)return m+'分前';const h=Math.round(m/60);if(h<24)return h+'時間前';return Math.round(h/24)+'日前'};
-function roomAdminCard(){
- let h=`<div class="card"><h3>👥 勉強状況と応援ルーム</h3><div class="sub">学生がアプリを開いた記録です。先生には、匿名・ニックネームの学生も実名で表示されます（学生には事前に伝えておきましょう）。</div><button class="btn s" onclick="pullRoom()">🔄 最新の状況を読み込む</button>`;
- const R=ui.room;if(!R)return h+'</div>';
+function roomAdminCard(mode){
+ mode=mode||'status';const isS=mode==='status';
+ let h=`<div class="card"><h3>${isS?'👥 全学生の勉強状況':'🙌 応援ルームの表示名と利用状況'}</h3><div class="sub">${isS?'名簿に登録された全員が表示されます。「画面を見る」で、その学生の画面を再現して確認できます。':'学生が決めた表示名と、公開・受け取りの設定です。教員には、匿名・ニックネームの学生も実名で表示されます（学生には事前に伝えておきましょう）。'}</div><button class="btn s" onclick="pullRoom()">🔄 最新の状況を読み込む</button>`;
+ const R=ui.room;if(!R)return h+(GAS_URL?'<div class="sub">読み込み中です…</div>':'<div class="sub">この機能は公開版（GitHub Pages）で使えます。</div>')+'</div>';
  const k=ui.rmSort||'old';let L=[...R.list];
- L.sort(k==='old'?(a,b)=>(a.lastStudy||0)-(b.lastStudy||0):k==='today'?(a,b)=>b.n-a.n:(a,b)=>b.nw-a.nw);
- const used=L.filter(x=>x.used).length,stu=L.filter(x=>x.studying).length,td=L.reduce((s,x)=>s+x.n,0),wk=L.reduce((s,x)=>s+x.nw,0),vis=L.filter(x=>x.show).length;
- h+=`<div class="grid3" style="margin-top:10px"><div class="stat"><b>${stu}</b><span class="sub">いま勉強中</span></div><div class="stat"><b>${used}/${L.length}</b><span class="sub">応援ルーム利用</span></div><div class="stat"><b>${td}</b><span class="sub">今日の合計(問)</span></div></div><div class="sub" style="margin-top:6px">今週の合計 ${wk}問　／　一覧に公開している学生 ${vis}名</div>`;
- h+=`<div style="display:flex;gap:6px;margin:8px 0">${[['old','最終勉強が古い順'],['today','今日の問題数'],['week','今週の問題数']].map(x=>`<button class="btn ${k===x[0]?'':'g'} s" style="margin:0;padding:8px 4px;font-size:12px" onclick="setRmSort('${x[0]}')">${x[1]}</button>`).join('')}</div>`;
- h+=`<table class="tbl"><tr><th>学生</th><th>今日</th><th>今週</th><th>連続</th><th>最終勉強</th></tr>${L.map(x=>`<tr><td>${x.studying?'<span class="live"></span>':''}${esc(x.name)}<br><span class="sub">${x.used?`表示：${esc(x.disp)}${x.show?'（公開）':'（非公開）'}${x.recv?'':'・受取オフ'}${x.hidden?'・制限中':''}`:'未使用'}${x.used?`<br>送${x.sent}／受${x.recvN}`:''}</span>${x.used&&x.disp&&x.disp!=='匿名さん'&&x.mode!=='real'?` <a href="#" onclick="hideNick('${esc(x.id)}',true);return false" class="sub">匿名にする</a>`:''}<br><a href="#" onclick="viewAs('${esc(x.id)}');return false" class="sub">👁 画面を見る</a>${x.hidden?` <a href="#" onclick="hideNick('${esc(x.id)}',false);return false" class="sub">制限を解除</a>`:''}</td><td>${x.n}</td><td>${x.nw}</td><td>${x.streak||0}日</td><td>${ago(x.lastStudy||x.lastPush)}</td></tr>`).join('')}</table></div>`;
+ const used=L.filter(x=>x.used).length,stu=L.filter(x=>x.studying).length,td=L.reduce((s,x)=>s+x.n,0),wk=L.reduce((s,x)=>s+x.nw,0),vis=L.filter(x=>x.show).length,off=L.filter(x=>x.used&&!x.recv).length,sn=L.reduce((s,x)=>s+x.sent,0);
+ if(isS){
+  L.sort(k==='old'?(a,b)=>(a.lastStudy||0)-(b.lastStudy||0):k==='today'?(a,b)=>b.n-a.n:(a,b)=>b.nw-a.nw);
+  h+=`<div class="grid3" style="margin-top:10px"><div class="stat"><b>${stu}</b><span class="sub">いま勉強中</span></div><div class="stat"><b>${td}</b><span class="sub">今日の合計(問)</span></div><div class="stat"><b>${wk}</b><span class="sub">今週の合計(問)</span></div></div>`;
+  h+=`<div style="display:flex;gap:6px;margin:8px 0">${[['old','最終勉強が古い順'],['today','今日の問題数'],['week','今週の問題数']].map(x=>`<button class="btn ${k===x[0]?'':'g'} s" style="margin:0;padding:8px 4px;font-size:12px" onclick="setRmSort('${x[0]}')">${x[1]}</button>`).join('')}</div>`;
+  h+=`<table class="tbl"><tr><th>学生</th><th>今日</th><th>今週</th><th>連続</th><th>最終勉強</th></tr>${L.map(x=>`<tr><td>${x.studying?'<span class="live"></span>':''}<b>${esc(x.name)}</b>${x.used?'':'<span class="sub">（未使用）</span>'}<br><a href="#" onclick="viewAs('${esc(x.id)}');return false" class="sub">👁 画面を見る</a></td><td>${x.n}</td><td>${x.nw}</td><td>${x.streak||0}日</td><td>${ago(x.lastStudy||x.lastPush)}</td></tr>`).join('')}</table></div>`;
+ }else{
+  L.sort((a,b)=>(b.used-a.used)||String(a.name).localeCompare(String(b.name),'ja'));
+  h+=`<div class="grid3" style="margin-top:10px"><div class="stat"><b>${used}/${L.length}</b><span class="sub">利用した人</span></div><div class="stat"><b>${vis}</b><span class="sub">一覧に公開</span></div><div class="stat"><b>${sn}</b><span class="sub">スタンプ送信数</span></div></div><div class="sub" style="margin-top:6px">スタンプを受け取らない設定の人：${off}名</div>`;
+  h+=`<table class="tbl"><tr><th>学生（実名）</th><th>表示名</th><th>公開</th><th>送／受</th></tr>${L.filter(x=>x.used).map(x=>`<tr><td>${esc(x.name)}${x.recv?'':'<br><span class="sub">受取オフ</span>'}</td><td>${esc(x.disp||'-')}${x.hidden?'<br><span class="sub">制限中</span>':''}${x.disp&&x.disp!=='匿名さん'&&x.mode!=='real'&&!x.hidden?`<br><a href="#" onclick="hideNick('${esc(x.id)}',true);return false" class="sub">匿名にする</a>`:''}${x.hidden?`<br><a href="#" onclick="hideNick('${esc(x.id)}',false);return false" class="sub">制限を解除</a>`:''}</td><td>${x.show?'公開':'非公開'}</td><td>${x.sent}／${x.recvN}</td></tr>`).join('')}</table>${used?'':'<div class="sub" style="margin-top:8px">まだ応援ルームを使った学生がいません。</div>'}</div>`;
+ }
  return h;
 }
 
